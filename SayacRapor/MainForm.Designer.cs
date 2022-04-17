@@ -32,7 +32,6 @@
             this.sayaclarDataSet = new SayacRapor.SayaclarDataSet();
             this.sayaclarDataSetBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.dataViewOncekiKWH = new System.Windows.Forms.DataGridView();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.listBox2 = new System.Windows.Forms.ListBox();
             this.btnExcel = new System.Windows.Forms.Button();
@@ -51,7 +50,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.sayaclarDataSet)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.sayaclarDataSetBindingSource)).BeginInit();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataViewOncekiKWH)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataViewSayac)).BeginInit();
             this.panel2.SuspendLayout();
@@ -74,7 +72,6 @@
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.dataViewOncekiKWH);
             this.groupBox2.Controls.Add(this.listBox1);
             this.groupBox2.Controls.Add(this.listBox2);
             this.groupBox2.Controls.Add(this.btnExcel);
@@ -87,17 +84,9 @@
             this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox2.Size = new System.Drawing.Size(948, 81);
+            this.groupBox2.Size = new System.Drawing.Size(982, 81);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
-            // 
-            // dataViewOncekiKWH
-            // 
-            this.dataViewOncekiKWH.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataViewOncekiKWH.Location = new System.Drawing.Point(442, 17);
-            this.dataViewOncekiKWH.Name = "dataViewOncekiKWH";
-            this.dataViewOncekiKWH.Size = new System.Drawing.Size(125, 59);
-            this.dataViewOncekiKWH.TabIndex = 11;
             // 
             // listBox1
             // 
@@ -188,7 +177,7 @@
             this.panel1.Location = new System.Drawing.Point(2, 2);
             this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(940, 325);
+            this.panel1.Size = new System.Drawing.Size(974, 325);
             this.panel1.TabIndex = 12;
             // 
             // dataViewSayac
@@ -202,9 +191,12 @@
             this.dataViewSayac.Name = "dataViewSayac";
             this.dataViewSayac.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataViewSayac.RowTemplate.Height = 24;
-            this.dataViewSayac.Size = new System.Drawing.Size(940, 325);
+            this.dataViewSayac.Size = new System.Drawing.Size(974, 325);
             this.dataViewSayac.TabIndex = 7;
+            this.dataViewSayac.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataViewSayac_CellBeginEdit);
+            this.dataViewSayac.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataViewSayac_CellMouseClick);
             this.dataViewSayac.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataViewSayac_CellValueChanged);
+            this.dataViewSayac.Scroll += new System.Windows.Forms.ScrollEventHandler(this.dataViewSayac_Scroll);
             // 
             // panel2
             // 
@@ -214,7 +206,7 @@
             this.panel2.Location = new System.Drawing.Point(2, 331);
             this.panel2.Margin = new System.Windows.Forms.Padding(2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(940, 366);
+            this.panel2.Size = new System.Drawing.Size(974, 366);
             this.panel2.TabIndex = 13;
             // 
             // dataViewGunluk
@@ -228,8 +220,10 @@
             this.dataViewGunluk.Name = "dataViewGunluk";
             this.dataViewGunluk.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataViewGunluk.RowTemplate.Height = 24;
-            this.dataViewGunluk.Size = new System.Drawing.Size(940, 366);
+            this.dataViewGunluk.Size = new System.Drawing.Size(974, 366);
             this.dataViewGunluk.TabIndex = 8;
+            this.dataViewGunluk.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataViewGunluk_CellMouseClick);
+            this.dataViewGunluk.Scroll += new System.Windows.Forms.ScrollEventHandler(this.dataViewGunluk_Scroll);
             // 
             // menuStrip1
             // 
@@ -261,7 +255,7 @@
             this.panel3.Location = new System.Drawing.Point(11, 111);
             this.panel3.Margin = new System.Windows.Forms.Padding(2);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(948, 701);
+            this.panel3.Size = new System.Drawing.Size(982, 701);
             this.panel3.TabIndex = 15;
             // 
             // MainForm
@@ -283,7 +277,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.sayaclarDataSetBindingSource)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataViewOncekiKWH)).EndInit();
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataViewSayac)).EndInit();
             this.panel2.ResumeLayout(false);
@@ -315,7 +308,6 @@
         private System.Windows.Forms.Button btnExcel;
         private System.Windows.Forms.ListBox listBox2;
         private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.DataGridView dataViewOncekiKWH;
     }
 }
 
