@@ -5,6 +5,8 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Reflection;
+using ClosedXML.Excel;
 
 namespace SayacRapor
 {
@@ -26,7 +28,8 @@ namespace SayacRapor
         string isim = "xxx";
         string oncekiGun;
         string ilkGunString;
-        int sayi; 
+        string startDate, endDate;
+        int sayi;
         DateTime ilkGunDateTime, startZaman, endZaman;
         TimeSpan zaman;
         public static string conString = "Data Source=DESKTOP-VJMT9PK\\SQLEXPRESS;Initial Catalog=Sayaclar;User ID=sa;Password=a123456*";
@@ -34,8 +37,8 @@ namespace SayacRapor
         private void Form1_Load(object sender, EventArgs e)
         {
             this.AutoScroll = true;
-            string startDate = DateTime.Now.ToString("yyyy-MM") + "-01";
-            string endDate = DateTime.Now.ToString("yyyy-MM-dd");
+            startDate = DateTime.Now.ToString("yyyy-MM") + "-01";
+            endDate = DateTime.Now.ToString("yyyy-MM-dd");
             datePickerStart.Value = DateTime.Parse(DateTime.Now.ToString("yyyy-MM") + "-01");
             ilkGunString = datePickerStart.Value.AddDays(-1).ToString("yyyy-MM-dd");
             ilkGunDateTime = datePickerStart.Value;
@@ -54,8 +57,8 @@ namespace SayacRapor
             endZaman = datePickerEnd.Value;
             zaman = endZaman - startZaman;
             sayi = zaman.Days + 1;
-            string startDate = datePickerStart.Value.ToString("yyyy-MM-dd");
-            string endDate = datePickerEnd.Value.ToString("yyyy-MM-dd");
+            startDate = datePickerStart.Value.ToString("yyyy-MM-dd");
+            endDate = datePickerEnd.Value.ToString("yyyy-MM-dd");
             sayacGetirIndexOF(startDate, endDate);
         }
         public void veriGetir(string sDate, string eDate)
@@ -346,8 +349,8 @@ namespace SayacRapor
                 sayacTable.Rows.Add(tarihSayacRow);
                 gunlukTable.Rows.Add(tarihGunlukRow);
             }
-            tarihReader.Close(); 
-            
+            tarihReader.Close();
+
             string sayacString = "Select * From SAYAC_AYAR ORDER BY sayac_isim";
             SqlCommand sayacCommand = new SqlCommand(sayacString, con);
             SqlDataReader sayacReader = sayacCommand.ExecuteReader();
@@ -376,7 +379,7 @@ namespace SayacRapor
                     string oncekiDinamikGun = ilkGunDateTime.AddDays(-1).ToString("yyyy-MM-dd");
                     dinamikIsim = sayacTable.Columns[j].ToString();
                     string ilkGunKWHString = "SELECT TOP 1 KWH FROM SAYAC_BILGISI WHERE TARIH = '" + oncekiDinamikGun + "' AND ISIM = '" + dinamikIsim + "'";
-                    SqlCommand ilkGunCommand = new SqlCommand(ilkGunKWHString, con); 
+                    SqlCommand ilkGunCommand = new SqlCommand(ilkGunKWHString, con);
                     SqlDataReader ilkGunReader = ilkGunCommand.ExecuteReader();
                     if (ilkGunReader.Read())
                     {
@@ -388,7 +391,7 @@ namespace SayacRapor
                     }
 
                     ilkGunReader.Close();
-                    if(skip == false)
+                    if (skip == false)
                     {
                         string dinamikString = "SELECT TOP 1 ISIM,KWH From SAYAC_BILGISI WHERE TARIH = '" + dinamikTarih + "' AND ISIM = '" + dinamikIsim + "' AND KWH <> 0";
                         SqlCommand dinamikCommand = new SqlCommand(dinamikString, con);
@@ -404,9 +407,9 @@ namespace SayacRapor
                         }
                         dinamikReader.Close();
                     }
-                    
+
                 }
-                
+
             }
 
             dataViewSayac.DataSource = sayacTable;
@@ -420,6 +423,8 @@ namespace SayacRapor
         }
         void sayacGetirIndexOF(string sDate, string eDate)
         {
+            listBox1.Items.Clear();
+            listBox2.Items.Clear();
             dataGridTemizle();
             st.Reset();
             st.Restart();
@@ -466,7 +471,7 @@ namespace SayacRapor
             st.Restart();
 
             //KWH verileri tabloya eklendi.
-            for(int i = 0; i < colDate.Count; i++)
+            for (int i = 0; i < colDate.Count; i++)
             {
                 oncekiGun = ilkGunDateTime.AddDays(-1).ToString("yyyy-MM-dd");
                 string oncekiGunString = "SELECT * From SAYAC_BILGISI WHERE TARIH = '" + oncekiGun + "' AND KWH <> 0";
@@ -474,7 +479,7 @@ namespace SayacRapor
                 SqlDataReader oncekiGunReader = oncekiGunCommand.ExecuteReader();
                 listIlkIsım.Clear();
                 listIlkKWH.Clear();
-                while(oncekiGunReader.Read())
+                while (oncekiGunReader.Read())
                 {
                     listIlkIsım.Add(oncekiGunReader["ISIM"]);
                     listIlkKWH.Add(oncekiGunReader["KWH"]);
@@ -513,7 +518,8 @@ namespace SayacRapor
                     }
                     else
                     {
-                        listBox2.Items.Add(indexName);
+                        if (listBox2.Items.IndexOf(indexName) == -1)
+                            listBox2.Items.Add(indexName);
                     }
                     KWH = 0;
                 }
@@ -843,76 +849,94 @@ namespace SayacRapor
 
         private void btnExcel_Click(object sender, EventArgs e)
         {
-            /*
-            // creating Excel Application  
-            Microsoft.Office.Interop.Excel._Application app = new Microsoft.Office.Interop.Excel.Application();
-            // creating new WorkBook within Excel application  
-            Microsoft.Office.Interop.Excel._Workbook workbook = app.Workbooks.Add(Type.Missing);
-            // creating new Excelsheet in workbook  
-            Microsoft.Office.Interop.Excel._Worksheet worksheet = null;
-            // see the excel sheet behind the program  
-            app.Visible = true;
-            // get the reference of first sheet. By default its name is Sheet1.  
-            // store its reference to worksheet  
-            worksheet = workbook.Sheets["Sayfa1"];
-            worksheet = workbook.ActiveSheet;
-            // changing the name of active sheet  
-            worksheet.Name = "Exported from gridview";
-            // storing header part in Excel  
-            for (int i = 1; i < dataViewSayac.Columns.Count + 1; i++)
+            DataTable dt = new DataTable();
+
+            //Total aktarma
+            foreach (DataGridViewColumn column in dataViewSayac.Columns)
             {
-                worksheet.Cells[1, i] = dataViewSayac.Columns[i - 1].HeaderText;
+                dt.Columns.Add(column.HeaderText, column.ValueType);
             }
-            // storing Each row and column value to excel sheet  
-            for (int i = 0; i < dataViewSayac.Rows.Count - 1; i++)
+            foreach (DataGridViewRow row in dataViewSayac.Rows)
             {
-                for (int j = 0; j < dataViewSayac.Columns.Count; j++)
+                dt.Rows.Add();
+                foreach (DataGridViewCell cell in row.Cells)
                 {
-                    string bos = "";
-                    if (dataViewSayac.Rows[i].Cells[j].Value != null)
-                        worksheet.Cells[i + 2, j + 1] = dataViewSayac.Rows[i].Cells[j].Value.ToString();
-                    else
-                        worksheet.Cells[i + 2, j + 1] = bos;
+                    dt.Rows[dt.Rows.Count - 1][cell.ColumnIndex] = cell.Value;
                 }
             }
-            // save the application  
-            workbook.SaveAs("c:\\output.xls", Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlExclusive, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
-            // Exit from the application  
-            app.Quit();*/
+
+            dt.Rows.Add();
+            //Günlük aktarma
+            foreach (DataGridViewColumn column in dataViewGunluk.Columns)
+            {
+                dt.Rows[dt.Rows.Count - 1][column.Index] = column.Name;
+            }
+            dt.Rows.Add();
+
+            foreach (DataGridViewRow row in dataViewGunluk.Rows)
+            {
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    dt.Rows[dt.Rows.Count - 1][cell.ColumnIndex] = cell.Value;
+                }
+                dt.Rows.Add();
+            }
+
+            string username = Environment.UserName;
+            //Excel çıktı ayarları.
+            string folderPath = "C:\\Users\\" + username + "\\Desktop\\";
+            string folderName = "Sayaç Tüketim " + startDate + " - " + endDate + ".xlsx";
+            if (!System.IO.Directory.Exists(folderPath))
+            {
+                System.IO.Directory.CreateDirectory(folderPath);
+            }
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                wb.Worksheets.Add(dt, "Customers");
+                wb.SaveAs(folderPath + folderName);
+            }
+            MessageBox.Show("Dosya masaüstüne kaydedildi.");
         }
 
+        private void dataViewSayac_Scroll(object sender, ScrollEventArgs e)
+        {
+            dataViewGunluk.FirstDisplayedScrollingColumnIndex = dataViewSayac.FirstDisplayedScrollingColumnIndex;
+            dataViewGunluk.FirstDisplayedScrollingRowIndex = dataViewSayac.FirstDisplayedScrollingRowIndex;
+        }
+
+        private void dataViewGunluk_Scroll(object sender, ScrollEventArgs e)
+        {
+            dataViewSayac.FirstDisplayedScrollingColumnIndex = dataViewGunluk.FirstDisplayedScrollingColumnIndex;
+            dataViewSayac.FirstDisplayedScrollingRowIndex = dataViewGunluk.FirstDisplayedScrollingRowIndex;
+        }
+
+        private void dataViewSayac_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            int row = dataViewSayac.CurrentCell.RowIndex;
+            int cell = dataViewSayac.CurrentCell.ColumnIndex;
+            dataViewGunluk.CurrentCell = dataViewGunluk.Rows[row].Cells[cell];
+        }
+
+        private void dataViewGunluk_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            int row = dataViewGunluk.CurrentCell.RowIndex;
+            int cell = dataViewGunluk.CurrentCell.ColumnIndex;
+            dataViewSayac.CurrentCell = dataViewSayac.Rows[row].Cells[cell];
+        }
+
+        private void dataViewSayac_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            MessageBox.Show("Girdi");
+        }
         private void dataViewSayac_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-
+            MessageBox.Show("Değişti");
         }
 
         private void ayarlarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SayacSettings frm = new SayacSettings();
             frm.Show();
-        }
-
-        private void copyAlltoClipboard()
-        {
-            dataViewGunluk.SelectAll();
-            DataObject dataObj = dataViewGunluk.GetClipboardContent();
-            if (dataObj != null)
-                Clipboard.SetDataObject(dataObj);
-        }
-        private void button3_Click_1(object sender, EventArgs e)
-        {
-            copyAlltoClipboard();
-            Microsoft.Office.Interop.Excel.Application xlexcel;
-            Microsoft.Office.Interop.Excel.Workbook xlWorkBook;
-            Microsoft.Office.Interop.Excel.Worksheet xlWorkSheet;
-            object misValue = System.Reflection.Missing.Value;
-            xlexcel = new Excel.Application();
-            xlexcel.Visible = true;
-            xlWorkBook = xlexcel.Workbooks.Add(misValue);
-            xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
-            Excel.Range CR = (Excel.Range)xlWorkSheet.Cells[1, 1];
-            CR.Select();
-            xlWorkSheet.PasteSpecial(CR, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, true);
         }
     }
 }
