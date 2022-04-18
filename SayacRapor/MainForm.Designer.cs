@@ -46,7 +46,12 @@
             this.dataViewGunluk = new System.Windows.Forms.DataGridView();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.ayarlarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.yöneticiModuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.açıkKapatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.sayaclarDataSet)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.sayaclarDataSetBindingSource)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -56,6 +61,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataViewGunluk)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // sayaclarDataSet
@@ -84,7 +90,7 @@
             this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox2.Size = new System.Drawing.Size(982, 81);
+            this.groupBox2.Size = new System.Drawing.Size(965, 81);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             // 
@@ -177,7 +183,7 @@
             this.panel1.Location = new System.Drawing.Point(2, 2);
             this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(974, 325);
+            this.panel1.Size = new System.Drawing.Size(957, 325);
             this.panel1.TabIndex = 12;
             // 
             // dataViewSayac
@@ -186,12 +192,13 @@
             this.dataViewSayac.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataViewSayac.Cursor = System.Windows.Forms.Cursors.Default;
             this.dataViewSayac.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataViewSayac.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dataViewSayac.Location = new System.Drawing.Point(0, 0);
             this.dataViewSayac.Margin = new System.Windows.Forms.Padding(2);
             this.dataViewSayac.Name = "dataViewSayac";
             this.dataViewSayac.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataViewSayac.RowTemplate.Height = 24;
-            this.dataViewSayac.Size = new System.Drawing.Size(974, 325);
+            this.dataViewSayac.Size = new System.Drawing.Size(957, 325);
             this.dataViewSayac.TabIndex = 7;
             this.dataViewSayac.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataViewSayac_CellBeginEdit);
             this.dataViewSayac.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataViewSayac_CellMouseClick);
@@ -206,7 +213,7 @@
             this.panel2.Location = new System.Drawing.Point(2, 331);
             this.panel2.Margin = new System.Windows.Forms.Padding(2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(974, 366);
+            this.panel2.Size = new System.Drawing.Size(957, 366);
             this.panel2.TabIndex = 13;
             // 
             // dataViewGunluk
@@ -215,12 +222,13 @@
             this.dataViewGunluk.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataViewGunluk.Cursor = System.Windows.Forms.Cursors.Default;
             this.dataViewGunluk.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataViewGunluk.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dataViewGunluk.Location = new System.Drawing.Point(0, 0);
             this.dataViewGunluk.Margin = new System.Windows.Forms.Padding(2);
             this.dataViewGunluk.Name = "dataViewGunluk";
             this.dataViewGunluk.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataViewGunluk.RowTemplate.Height = 24;
-            this.dataViewGunluk.Size = new System.Drawing.Size(974, 366);
+            this.dataViewGunluk.Size = new System.Drawing.Size(957, 366);
             this.dataViewGunluk.TabIndex = 8;
             this.dataViewGunluk.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataViewGunluk_CellMouseClick);
             this.dataViewGunluk.Scroll += new System.Windows.Forms.ScrollEventHandler(this.dataViewGunluk_Scroll);
@@ -229,7 +237,8 @@
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ayarlarToolStripMenuItem});
+            this.ayarlarToolStripMenuItem,
+            this.yöneticiModuToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
@@ -244,6 +253,21 @@
             this.ayarlarToolStripMenuItem.Text = "Sayaç Ayarları";
             this.ayarlarToolStripMenuItem.Click += new System.EventHandler(this.ayarlarToolStripMenuItem_Click);
             // 
+            // yöneticiModuToolStripMenuItem
+            // 
+            this.yöneticiModuToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.açıkKapatToolStripMenuItem});
+            this.yöneticiModuToolStripMenuItem.Name = "yöneticiModuToolStripMenuItem";
+            this.yöneticiModuToolStripMenuItem.Size = new System.Drawing.Size(96, 20);
+            this.yöneticiModuToolStripMenuItem.Text = "Yönetici Modu";
+            // 
+            // açıkKapatToolStripMenuItem
+            // 
+            this.açıkKapatToolStripMenuItem.Name = "açıkKapatToolStripMenuItem";
+            this.açıkKapatToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.açıkKapatToolStripMenuItem.Text = "(Kapalı) - Aç";
+            this.açıkKapatToolStripMenuItem.Click += new System.EventHandler(this.açıkKapatToolStripMenuItem_Click);
+            // 
             // panel3
             // 
             this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -255,15 +279,36 @@
             this.panel3.Location = new System.Drawing.Point(11, 111);
             this.panel3.Margin = new System.Windows.Forms.Padding(2);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(982, 701);
+            this.panel3.Size = new System.Drawing.Size(965, 701);
             this.panel3.TabIndex = 15;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 812);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(1004, 22);
+            this.statusStrip1.TabIndex = 16;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(0, 17);
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 7000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(1021, 655);
+            this.ClientSize = new System.Drawing.Size(1021, 707);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.menuStrip1);
@@ -284,6 +329,8 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.panel3.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -308,6 +355,11 @@
         private System.Windows.Forms.Button btnExcel;
         private System.Windows.Forms.ListBox listBox2;
         private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ToolStripMenuItem yöneticiModuToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem açıkKapatToolStripMenuItem;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel statusLabel;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

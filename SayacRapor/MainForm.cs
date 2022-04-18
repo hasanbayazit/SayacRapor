@@ -29,9 +29,15 @@ namespace SayacRapor
         string ilkGunString;
         string startDate, endDate;
         int sayi;
+
+        Boolean adminMode = false;
+        string sayacIsim, tarih;
+        double eskiKWH, yeniKWH;
+        Boolean insertMode = true;
         DateTime ilkGunDateTime, startZaman, endZaman;
         TimeSpan zaman;
         public static string conString = "Data Source=DESKTOP-VJMT9PK\\SQLEXPRESS;Initial Catalog=Sayaclar;User ID=sa;Password=a123456*";
+        SqlConnection con = new SqlConnection(conString);
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -58,7 +64,6 @@ namespace SayacRapor
             dataGridTemizle();
             st.Reset();
             st.Restart();
-            SqlConnection con = new SqlConnection(conString);
             //dataGridTemizle();
             //Bağlantı açık değilse bağlantıyı açıyoruz.
             if (con.State != ConnectionState.Open)
@@ -271,12 +276,44 @@ namespace SayacRapor
             dataViewSayac.FirstDisplayedScrollingRowIndex = dataViewGunluk.FirstDisplayedScrollingRowIndex;
         }
 
+        private void açıkKapatToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Font defaultFont = SystemFonts.DefaultFont;
+            if (açıkKapatToolStripMenuItem.Text == "(Açık) - Kapat")
+            {
+                adminMode = false;
+                açıkKapatToolStripMenuItem.Text = "(Kapalı) - Aç";
+                dataViewSayac.EditMode = DataGridViewEditMode.EditProgrammatically;
+                statusLabel.ForeColor = Color.Green;
+                statusLabel.Font = new Font(defaultFont.FontFamily, defaultFont.Size);
+                statusLabel.Text = "Edit mod kapalı.";
+                timer1.Start();
+            }
+            else if(açıkKapatToolStripMenuItem.Text == "(Kapalı) - Aç")
+            {
+                adminMode = true;
+                açıkKapatToolStripMenuItem.Text = "(Açık) - Kapat";
+                dataViewSayac.EditMode = DataGridViewEditMode.EditOnF2;
+                statusLabel.ForeColor = Color.Red;
+                statusLabel.Font = new Font(defaultFont.FontFamily, defaultFont.Size, FontStyle.Bold);
+                statusLabel.Text = "Edit mod açık.";
+                MessageBox.Show("Yapacağınız işlemler direkt olarak veritabanını etkileyecektir.", "Dikkat" ,MessageBoxButtons.OK ,MessageBoxIcon.Warning);
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            timer1.Interval = 10000;
+            statusLabel.Text = "";
+        }
+
         private void dataViewSayac_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             int row = dataViewSayac.CurrentCell.RowIndex;
             int cell = dataViewSayac.CurrentCell.ColumnIndex;
             dataViewGunluk.CurrentCell = dataViewGunluk.Rows[row].Cells[cell];
         }
+
         private void dataViewGunluk_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             int row = dataViewGunluk.CurrentCell.RowIndex;
@@ -286,12 +323,78 @@ namespace SayacRapor
 
         private void dataViewSayac_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            MessageBox.Show("Girdi");
+            if(adminMode)
+            {
+                int rowIndex = dataViewSayac.CurrentCell.RowIndex;
+                int colIndex = dataViewSayac.CurrentCell.ColumnIndex;
+                sayacIsim = dataViewSayac.Columns[colIndex].Name;
+                tarih = dataViewSayac.Rows[rowIndex].Cells["TARIH"].Value.ToString();
+                if (dataViewSayac.Rows[rowIndex].Cells[sayacIsim].Value.ToString() != "")
+                {
+                    eskiKWH = Convert.ToDouble(dataViewSayac.Rows[rowIndex].Cells[sayacIsim].Value);
+                    insertMode = false;
+                }
+                else
+                {
+                    insertMode = true;
+                    eskiKWH = -1;
+                }
+            }
         }
 
         private void dataViewSayac_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            MessageBox.Show("Değişti");
+            if(adminMode)
+            {
+                int rowIndex2 = dataViewSayac.CurrentCell.RowIndex;
+                int colIndex2 = dataViewSayac.CurrentCell.ColumnIndex;
+                string sayacIsim2 = dataViewSayac.Columns[colIndex2].Name;
+                string tarih2 = dataViewSayac.Rows[rowIndex2].Cells["TARIH"].Value.ToString();
+                if (dataViewSayac.Rows[rowIndex2].Cells[sayacIsim].Value.ToString() != "")
+                {
+                    yeniKWH = Convert.ToDouble(dataViewSayac.Rows[rowIndex2].Cells[sayacIsim].Value);
+                }
+                if (sayacIsim == sayacIsim2 && tarih == tarih2 && eskiKWH != yeniKWH)
+                {
+                    //İsim ve tarih aynı ve hücre değişmiş.
+                    if (insertMode)
+                    {
+                        //İnsert işlemleri
+                        Decimal yeniKWHDec = Convert.ToDecimal(yeniKWH);
+                        string insertString = "INSERT INTO SAYAC_BILGISI (ISIM, KWH, TARIH, SAAT) VALUES ('" + sayacIsim2+ "', @yeniKWH, '" + tarih2+"', '8')";
+                        SqlCommand insertCommand = new SqlCommand(insertString, con);
+                        insertCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
+                        if (con.State != ConnectionState.Open)
+                        {
+                            con.Open();
+                        }
+                        insertCommand.ExecuteNonQuery();
+                        if(con.State != ConnectionState.Closed)
+                        {
+                            con.Close();
+                        }
+                    }
+                    else
+                    {
+                        //Update işlemleri
+                        Decimal yeniKWHDec = Convert.ToDecimal(yeniKWH);
+                        Decimal eskiKWHDec = Convert.ToDecimal(eskiKWH);
+                        string updateString = "UPDATE SAYAC_BILGISI SET KWH = @yeniKWH WHERE ISIM = '"+sayacIsim2+"' AND TARIH = '"+tarih2+"' AND KWH = @eskiKWH";
+                        SqlCommand updateCommand = new SqlCommand(updateString, con);
+                        updateCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
+                        updateCommand.Parameters.Add(new SqlParameter("eskiKWH", eskiKWHDec));
+                        if (con.State != ConnectionState.Open)
+                        {
+                            con.Open();
+                        }
+                        updateCommand.ExecuteNonQuery();
+                        if (con.State != ConnectionState.Closed)
+                        {
+                            con.Close();
+                        }
+                    }
+                }
+            }
         }
 
         private void ayarlarToolStripMenuItem_Click(object sender, EventArgs e)
