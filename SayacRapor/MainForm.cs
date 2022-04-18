@@ -17,6 +17,8 @@ namespace SayacRapor
             InitializeComponent();
         }
         Stopwatch st = new Stopwatch();
+        ArrayList renklendirCol = new ArrayList();
+        ArrayList renklendirRow = new ArrayList();
         ArrayList colNames = new ArrayList();
         ArrayList colDate = new ArrayList();
         ArrayList colKWH = new ArrayList();
@@ -64,6 +66,8 @@ namespace SayacRapor
 
         void sayacGetir(string sDate, string eDate)
         {
+            renklendirCol.Clear();
+            renklendirRow.Clear();
             listBox1.Items.Clear();
             listBox2.Items.Clear();
             dataGridTemizle();
@@ -78,7 +82,7 @@ namespace SayacRapor
             string dinamikIsim = "";
             string dinamikTarih = "";
             string tarihString = "SELECT DISTINCT TARIH From SAYAC_BILGISI WHERE TARIH >= '" + sDate + "' AND TARIH <= '" + eDate + "' AND KWH <> 0 ORDER BY TARIH";
-            string fullString = "SELECT * From SAYAC_BILGISI WHERE TARIH >= '" + sDate + "' AND TARIH <= '" + eDate + "' AND KWH <> 0 ORDER BY ISIM,TARIH";
+            string fullString = "SELECT * From SAYAC_BILGISI WHERE TARIH >= '" + sDate + "' AND TARIH <= '" + eDate + "' AND KWH <> 0 ORDER BY ISIM,TARIH DESC KWH ASC";
             sayacTable.Columns.Add("TARIH");
             gunlukTable.Columns.Add("TARIH");
 
@@ -107,6 +111,7 @@ namespace SayacRapor
             sayacReader.Close();
             sayacReader = sayacCommand.ExecuteReader();
             DataRow carpanRow = gunlukTable.NewRow();
+            carpanRow[0] = "Çarpanlar >";
             while (sayacReader.Read())
             {
                 string indexName = sayacReader["sayac_isim"].ToString();
@@ -167,6 +172,11 @@ namespace SayacRapor
                     else
                     {
                         oncekiKWH = 0;
+                        if(nameIndex != -1)
+                        {
+                            renklendirCol.Add(nameIndex);
+                            renklendirRow.Add(tarihIndex);
+                        }
                     }
 
                     if (nameIndex != -1)
@@ -174,6 +184,11 @@ namespace SayacRapor
                         double gunlukTuketim = Math.Round(((KWH - oncekiKWH)*carpan), 3);
                         sayacRow[indexName] = KWH;
                         gunlukRow[indexName] = gunlukTuketim;
+                        if(gunlukTuketim < 0)
+                        {
+                            renklendirCol.Add(nameIndex);
+                            renklendirRow.Add(tarihIndex);
+                        }
                     }
                     else
                     {
@@ -198,6 +213,13 @@ namespace SayacRapor
             }
             st.Stop();
             listBox1.Items.Add("For Sonrası : " + st.ElapsedMilliseconds);
+            FreezeBand(dataViewGunluk.Rows[0]);
+            for(int i = 0; i<renklendirRow.Count;i++)
+            {
+                int row = Convert.ToInt16(renklendirRow[i]);
+                int col = Convert.ToInt16(renklendirCol[i]);
+                dataViewGunluk[col, row].Style.BackColor = Color.Red;
+            }
         }
 
         void dataGridTemizle()
@@ -291,7 +313,10 @@ namespace SayacRapor
         private void dataViewSayac_Scroll(object sender, ScrollEventArgs e)
         {
             dataViewGunluk.FirstDisplayedScrollingColumnIndex = dataViewSayac.FirstDisplayedScrollingColumnIndex;
-            dataViewGunluk.FirstDisplayedScrollingRowIndex = dataViewSayac.FirstDisplayedScrollingRowIndex;
+            if (dataViewSayac.FirstDisplayedScrollingRowIndex == 0)
+                dataViewGunluk.FirstDisplayedScrollingRowIndex = 1;
+            else
+                dataViewGunluk.FirstDisplayedScrollingRowIndex = dataViewSayac.FirstDisplayedScrollingRowIndex;
         }
 
         private void dataViewGunluk_Scroll(object sender, ScrollEventArgs e)
@@ -355,42 +380,47 @@ namespace SayacRapor
 
             for (int i = 0; i < multipleCol.Count; i++) 
             {
-                indexKolon = Convert.ToInt32(multipleCol[i]);
-                for (int k = 0; k < multipleCell.Count; k++)
+                try
                 {
-                    indexMaksimum = Convert.ToInt32(multipleCell.Count - 1);
-                    indexBaslangic = Convert.ToInt32(multipleCell[0]) - 1;
-                    indexBitis = Convert.ToInt32(multipleCell[indexMaksimum]) + 1;
-                    indexAktif = Convert.ToInt32(multipleCell[k]);
-
-                    degerBaslangic = Convert.ToDouble(sayacTable.Rows[indexBaslangic][indexKolon]);
-                    degerOnceki = Convert.ToDouble(sayacTable.Rows[indexAktif - 1][indexKolon]);
-                    degerBitis = Convert.ToDouble(sayacTable.Rows[indexBitis][indexKolon]);
-
-                    double hesaplananDeger = Math.Round(((degerBitis - degerBaslangic) / bolen) + degerOnceki,3);
-                    sayacTable.Rows[indexAktif][indexKolon] = hesaplananDeger;
-
-                    string tmpIsim = sayacTable.Columns[indexKolon].ColumnName;
-                    string tmpTarih = sayacTable.Rows[indexAktif]["TARIH"].ToString();
-
-                    Decimal yeniKWHDec = Convert.ToDecimal(hesaplananDeger);
-                    string insertString = "INSERT INTO SAYAC_BILGISI (ISIM, KWH, TARIH, SAAT) VALUES ('" + tmpIsim + "', @yeniKWH, '" + tmpTarih + "', '8')";
-                    SqlCommand insertCommand = new SqlCommand(insertString, con);
-                    insertCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
-                    if (con.State != ConnectionState.Open)
+                    indexKolon = Convert.ToInt32(multipleCol[i]);
+                    for (int k = 0; k < multipleCell.Count; k++)
                     {
-                        con.Open();
-                    }
-                    insertCommand.ExecuteNonQuery();
-                    if (con.State != ConnectionState.Closed)
-                    {
-                        con.Close();
-                    }
+                        indexMaksimum = Convert.ToInt32(multipleCell.Count - 1);
+                        indexBaslangic = Convert.ToInt32(multipleCell[0]) - 1;
+                        indexBitis = Convert.ToInt32(multipleCell[indexMaksimum]) + 1;
+                        indexAktif = Convert.ToInt32(multipleCell[k]);
 
+                        degerBaslangic = Convert.ToDouble(sayacTable.Rows[indexBaslangic][indexKolon]);
+                        degerOnceki = Convert.ToDouble(sayacTable.Rows[indexAktif - 1][indexKolon]);
+                        degerBitis = Convert.ToDouble(sayacTable.Rows[indexBitis][indexKolon]);
 
+                        double hesaplananDeger = Math.Round(((degerBitis - degerBaslangic) / bolen) + degerOnceki, 3);
+                        sayacTable.Rows[indexAktif][indexKolon] = hesaplananDeger;
+
+                        string tmpIsim = sayacTable.Columns[indexKolon].ColumnName;
+                        string tmpTarih = sayacTable.Rows[indexAktif]["TARIH"].ToString();
+
+                        Decimal yeniKWHDec = Convert.ToDecimal(hesaplananDeger);
+                        string insertString = "INSERT INTO SAYAC_BILGISI (ISIM, KWH, TARIH, SAAT) VALUES ('" + tmpIsim + "', @yeniKWH, '" + tmpTarih + "', '8')";
+                        SqlCommand insertCommand = new SqlCommand(insertString, con);
+                        insertCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
+                        if (con.State != ConnectionState.Open)
+                        {
+                            con.Open();
+                        }
+                        insertCommand.ExecuteNonQuery();
+                        if (con.State != ConnectionState.Closed)
+                        {
+                            con.Close();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Hata: " + ex);
                 }
             }
-            }
+        }
 
         private void dataViewSayac_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -402,6 +432,8 @@ namespace SayacRapor
         private void dataViewGunluk_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             int row = dataViewGunluk.CurrentCell.RowIndex;
+            if (row == 0)
+                row = 1;
             int cell = dataViewGunluk.CurrentCell.ColumnIndex;
             dataViewSayac.CurrentCell = dataViewSayac.Rows[row].Cells[cell];
         }
@@ -461,27 +493,42 @@ namespace SayacRapor
                     }
                     else
                     {
-                        //Update işlemleri
-                        Decimal yeniKWHDec = Convert.ToDecimal(yeniKWH);
-                        Decimal eskiKWHDec = Convert.ToDecimal(eskiKWH);
-                        string updateString = "UPDATE SAYAC_BILGISI SET KWH = @yeniKWH WHERE ISIM = '"+sayacIsim2+"' AND TARIH = '"+tarih2+"' AND KWH = @eskiKWH";
-                        SqlCommand updateCommand = new SqlCommand(updateString, con);
-                        updateCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
-                        updateCommand.Parameters.Add(new SqlParameter("eskiKWH", eskiKWHDec));
-                        if (con.State != ConnectionState.Open)
+                        try
                         {
-                            con.Open();
+                            //Update işlemleri
+                            Decimal yeniKWHDec = Convert.ToDecimal(yeniKWH);
+                            Decimal eskiKWHDec = Convert.ToDecimal(eskiKWH);
+                            string updateString = "UPDATE SAYAC_BILGISI SET KWH = @yeniKWH WHERE ISIM = '" + sayacIsim2 + "' AND TARIH = '" + tarih2 + "' AND KWH = @eskiKWH";
+                            SqlCommand updateCommand = new SqlCommand(updateString, con);
+                            updateCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
+                            updateCommand.Parameters.Add(new SqlParameter("eskiKWH", eskiKWHDec));
+                            if (con.State != ConnectionState.Open)
+                            {
+                                con.Open();
+                            }
+                            updateCommand.ExecuteNonQuery();
+                            if (con.State != ConnectionState.Closed)
+                            {
+                                con.Close();
+                            }
                         }
-                        updateCommand.ExecuteNonQuery();
-                        if (con.State != ConnectionState.Closed)
+                        catch (Exception ex)
                         {
-                            con.Close();
+                            MessageBox.Show("Hata: " + ex);
                         }
+                        
                     }
                 }
             }
         }
 
+        private static void FreezeBand(DataGridViewBand band)
+        {
+            band.Frozen = true;
+            DataGridViewCellStyle style = new DataGridViewCellStyle();
+            style.BackColor = Color.DarkGray;
+            band.DefaultCellStyle = style;
+        }
         private void ayarlarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SayacSettings frm = new SayacSettings();
