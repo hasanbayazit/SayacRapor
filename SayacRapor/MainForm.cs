@@ -333,6 +333,7 @@ namespace SayacRapor
 
         private void btnOtomatikDoldur_Click(object sender, EventArgs e)
         {
+            //Otomatik doldur
             multipleCell.Clear();
             multipleCol.Clear();
             int indexBaslangic, indexBitis, indexAktif, indexMaksimum, indexKolon;
