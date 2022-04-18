@@ -17,11 +17,44 @@ namespace SayacRapor
         {
             InitializeComponent();
         }
-
-        string sayacIsim;
-        int sayacSira, sayacMin, sayacExtra, maksSira = 0, sayacCarpan;
+        bool adminMode = true;
+        string sayacIsim, eskiBilgi, yeniBilgi, kolonIsim;
+        int sayacSira, sayacMin, sayacExtra, sayacCarpan, id;
         bool sayacMotorMu;
         SqlConnection con = new SqlConnection(MainForm.conString);
+
+        private void dataViewSettings_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            string updateString = "";
+            if (e.ColumnIndex == dataViewSettings.Columns["sayac_motor"].Index && e.RowIndex != -1)
+            {
+                int col = dataViewSettings.Columns["sayac_motor"].Index;
+                int row = dataViewSettings.CurrentCell.RowIndex;
+                string kolonIsim = dataViewSettings.Columns[col].Name;
+                int id = Convert.ToInt16(dataViewSettings.Rows[row].Cells["id"].Value);
+                bool sayacMotor = Convert.ToBoolean(dataViewSettings[col,row].Value);
+                if (kolonIsim == "sayac_motor")
+                {
+                    if (sayacMotor == false)
+                        updateString = "UPDATE SAYAC_AYAR SET sayac_motor = 1 WHERE id = @id";
+                    else
+                        updateString = "UPDATE SAYAC_AYAR SET sayac_motor = 0 WHERE id = @id";
+                }
+
+                SqlCommand updateCommand = new SqlCommand(updateString, con);
+                updateCommand.Parameters.Add(new SqlParameter("id", id));
+                if (con.State != ConnectionState.Open)
+                {
+                    con.Open();
+                }
+                updateCommand.ExecuteNonQuery();
+                if (con.State != ConnectionState.Closed)
+                {
+                    con.Close();
+                }
+            }
+        }
+
         private void SayacSettings_Load(object sender, EventArgs e)
         {
             veriGetir();
@@ -87,6 +120,89 @@ namespace SayacRapor
             }
         }
 
+        private void dataViewSettings_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            if (adminMode)
+            {
+                int rowIndex = dataViewSettings.CurrentCell.RowIndex;
+                int colIndex = dataViewSettings.CurrentCell.ColumnIndex;
+                kolonIsim = dataViewSettings.Columns[colIndex].Name;
+                id = Convert.ToInt16(dataViewSettings.Rows[rowIndex].Cells["id"].Value);
+                if (dataViewSettings[colIndex,rowIndex].Value.ToString() != "")
+                {
+                    eskiBilgi = dataViewSettings[colIndex, rowIndex].ToString();
+                }
+                else
+                {
+                    eskiBilgi = "";
+                }
+            }
+        }
+
+        private void dataViewSettings_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (adminMode && e.ColumnIndex != dataViewSettings.Columns["sayac_motor"].Index)
+            {
+                int rowIndex2 = dataViewSettings.CurrentCell.RowIndex;
+                int colIndex2 = dataViewSettings.CurrentCell.ColumnIndex;
+                string kolonIsim2 = dataViewSettings.Columns[colIndex2].Name;
+                int id2 = Convert.ToInt16(dataViewSettings.Rows[rowIndex2].Cells["id"].Value);
+                if (dataViewSettings[colIndex2, rowIndex2].Value.ToString() != "")
+                {
+                    yeniBilgi = dataViewSettings[colIndex2, rowIndex2].Value.ToString();
+                }
+                if (kolonIsim == kolonIsim2 && id == id2 && eskiBilgi != yeniBilgi)
+                {
+                    try
+                    {
+                        string updateString = "";
+                        //Update işlemleri
+                        if (kolonIsim2 == "sayac_isim")
+                            updateString = "UPDATE SAYAC_AYAR SET sayac_isim = @yeniBilgi WHERE id = @id2";
+                        else if(kolonIsim2 == "sayac_carpan")
+                            updateString = "UPDATE SAYAC_AYAR SET sayac_carpan = @yeniBilgi WHERE id = @id2";
+                        else if(kolonIsim2 == "sayac_min_tuketim")
+                            updateString = "UPDATE SAYAC_AYAR SET sayac_min_tuketim = @yeniBilgi WHERE id = @id2";
+                        else if(kolonIsim2 == "sayac_ekstra_tuketim")
+                            updateString = "UPDATE SAYAC_AYAR SET sayac_ekstra_tuketim = @yeniBilgi WHERE id = @id2";
+                        else if(kolonIsim2 == "sayac_sira")
+                            updateString = "UPDATE SAYAC_AYAR SET sayac_sira = @yeniBilgi WHERE id = @id2";
+                        else if(kolonIsim2 == "sayac_id")
+                            updateString = "UPDATE SAYAC_AYAR SET sayac_id= @yeniBilgi WHERE id = @id2";
+                        else if(kolonIsim2 == "makine_adi")
+                            updateString = "UPDATE SAYAC_AYAR SET makine_adi = @yeniBilgi WHERE id = @id2";
+                        else if (kolonIsim2 == "sayac_motor")
+                        {
+                            updateString = "UPDATE SAYAC_AYAR SET sayac_motor = @yeniBilgi WHERE id = @id2";
+                            if (yeniBilgi == "False")
+                                yeniBilgi = "0";
+                            else
+                                yeniBilgi = "1";
+                        }
+
+                        SqlCommand updateCommand = new SqlCommand(updateString, con);
+                        updateCommand.Parameters.Add(new SqlParameter("yeniBilgi", yeniBilgi));
+                        updateCommand.Parameters.Add(new SqlParameter("kolonIsmi1", kolonIsim2));
+                        updateCommand.Parameters.Add(new SqlParameter("id2", id2));
+                        if (con.State != ConnectionState.Open)
+                        {
+                            con.Open();
+                        }
+                        updateCommand.ExecuteNonQuery();
+                        if (con.State != ConnectionState.Closed)
+                        {
+                            con.Close();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Hata: " + ex);
+                    }
+                }
+            }
+
+        }
+
         void sayacEkle()
         {
             if (radioIsitici.Checked)
@@ -131,13 +247,6 @@ namespace SayacRapor
             DataTable dataTable = new DataTable();
             dataAdapter.Fill(dataTable);
             dataViewSettings.DataSource = dataTable;
-            SqlDataReader dataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
-
-            if (dataReader.Read())
-            {
-                maksSira = dataTable.AsEnumerable().Max(r => r.Field<int>("sayac_sira"));
-            }
-            txtSayacSira.Value = maksSira + 1;
             if (con.State != ConnectionState.Closed)
             {
                 con.Close();
