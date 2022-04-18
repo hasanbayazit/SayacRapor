@@ -22,6 +22,7 @@ namespace SayacRapor
         ArrayList colKWH = new ArrayList();
         ArrayList listIlkIsım = new ArrayList();
         ArrayList multipleCell = new ArrayList();
+        ArrayList multipleCol = new ArrayList();
         ArrayList listIlkKWH = new ArrayList();
         DataTable sayacTable = new DataTable();
         DataTable gunlukTable = new DataTable();
@@ -332,8 +333,63 @@ namespace SayacRapor
 
         private void btnOtomatikDoldur_Click(object sender, EventArgs e)
         {
+            multipleCell.Clear();
+            multipleCol.Clear();
+            int indexBaslangic, indexBitis, indexAktif, indexMaksimum, indexKolon;
+            double degerBaslangic, degerBitis, degerOnceki;
+            int bolen = 1;
+            foreach (DataGridViewCell cell in dataViewSayac.SelectedCells)
+            {
+                if (multipleCell.IndexOf(cell.RowIndex) == -1)
+                    multipleCell.Add(cell.RowIndex);
 
-        }
+                if (multipleCol.IndexOf(cell.ColumnIndex) == -1)
+                    multipleCol.Add(cell.ColumnIndex);
+
+                if (Convert.ToInt32(multipleCol[0]) == cell.ColumnIndex)
+                    bolen++;
+            }
+            multipleCell.Sort();
+            multipleCol.Sort();
+
+            for (int i = 0; i < multipleCol.Count; i++) 
+            {
+                indexKolon = Convert.ToInt32(multipleCol[i]);
+                for (int k = 0; k < multipleCell.Count; k++)
+                {
+                    indexMaksimum = Convert.ToInt32(multipleCell.Count - 1);
+                    indexBaslangic = Convert.ToInt32(multipleCell[0]) - 1;
+                    indexBitis = Convert.ToInt32(multipleCell[indexMaksimum]) + 1;
+                    indexAktif = Convert.ToInt32(multipleCell[k]);
+
+                    degerBaslangic = Convert.ToDouble(sayacTable.Rows[indexBaslangic][indexKolon]);
+                    degerOnceki = Convert.ToDouble(sayacTable.Rows[indexAktif - 1][indexKolon]);
+                    degerBitis = Convert.ToDouble(sayacTable.Rows[indexBitis][indexKolon]);
+
+                    double hesaplananDeger = Math.Round(((degerBitis - degerBaslangic) / bolen) + degerOnceki,3);
+                    sayacTable.Rows[indexAktif][indexKolon] = hesaplananDeger;
+
+                    string tmpIsim = sayacTable.Columns[indexKolon].ColumnName;
+                    string tmpTarih = sayacTable.Rows[indexAktif]["TARIH"].ToString();
+
+                    Decimal yeniKWHDec = Convert.ToDecimal(hesaplananDeger);
+                    string insertString = "INSERT INTO SAYAC_BILGISI (ISIM, KWH, TARIH, SAAT) VALUES ('" + tmpIsim + "', @yeniKWH, '" + tmpTarih + "', '8')";
+                    SqlCommand insertCommand = new SqlCommand(insertString, con);
+                    insertCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
+                    if (con.State != ConnectionState.Open)
+                    {
+                        con.Open();
+                    }
+                    insertCommand.ExecuteNonQuery();
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+
+                }
+            }
+            }
 
         private void dataViewSayac_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
