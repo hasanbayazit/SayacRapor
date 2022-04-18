@@ -21,6 +21,7 @@ namespace SayacRapor
         ArrayList colDate = new ArrayList();
         ArrayList colKWH = new ArrayList();
         ArrayList listIlkIsım = new ArrayList();
+        ArrayList multipleCell = new ArrayList();
         ArrayList listIlkKWH = new ArrayList();
         DataTable sayacTable = new DataTable();
         DataTable gunlukTable = new DataTable();
@@ -29,6 +30,8 @@ namespace SayacRapor
         string ilkGunString;
         string startDate, endDate;
         int sayi;
+        //string dbName = "Sayaclar";
+        string dbName = "SayaclarTest";
 
         Boolean adminMode = false;
         string sayacIsim, tarih;
@@ -36,7 +39,8 @@ namespace SayacRapor
         Boolean insertMode = true;
         DateTime ilkGunDateTime, startZaman, endZaman;
         TimeSpan zaman;
-        public static string conString = "Data Source=DESKTOP-VJMT9PK\\SQLEXPRESS;Initial Catalog=Sayaclar;User ID=sa;Password=a123456*";
+        //public static string conString = "Data Source=DESKTOP-VJMT9PK\\SQLEXPRESS;Initial Catalog=Sayaclar;User ID=sa;Password=a123456*";
+        public static string conString = "Data Source=192.168.2.123;Initial Catalog=SayaclarTest;User ID=sa;Password=a123456*";
         SqlConnection con = new SqlConnection(conString);
 
         private void Form1_Load(object sender, EventArgs e)
@@ -72,7 +76,7 @@ namespace SayacRapor
             }
             string dinamikIsim = "";
             string dinamikTarih = "";
-            string tarihString = "SELECT DISTINCT TARIH From SAYAC_BILGISI WHERE TARIH >= '" + sDate + "' AND TARIH <= '" + eDate + "' AND KWH <> 0";
+            string tarihString = "SELECT DISTINCT TARIH From SAYAC_BILGISI WHERE TARIH >= '" + sDate + "' AND TARIH <= '" + eDate + "' AND KWH <> 0 ORDER BY TARIH";
             string fullString = "SELECT * From SAYAC_BILGISI WHERE TARIH >= '" + sDate + "' AND TARIH <= '" + eDate + "' AND KWH <> 0 ORDER BY ISIM,TARIH";
             sayacTable.Columns.Add("TARIH");
             gunlukTable.Columns.Add("TARIH");
@@ -91,7 +95,7 @@ namespace SayacRapor
             tarihReader.Close();
 
             //Sayaç isimleri tabloya eklendi.
-            string sayacString = "Select * From SAYAC_AYAR ORDER BY sayac_isim";
+            string sayacString = "Select * From SAYAC_AYAR ORDER BY sayac_sira";
             SqlCommand sayacCommand = new SqlCommand(sayacString, con);
             SqlDataReader sayacReader = sayacCommand.ExecuteReader();
             while (sayacReader.Read())
@@ -100,6 +104,20 @@ namespace SayacRapor
                 gunlukTable.Columns.Add(sayacReader["sayac_isim"].ToString());
             }
             sayacReader.Close();
+            sayacReader = sayacCommand.ExecuteReader();
+            DataRow carpanRow = gunlukTable.NewRow();
+            while (sayacReader.Read())
+            {
+                string indexName = sayacReader["sayac_isim"].ToString();
+                carpanRow[indexName] = sayacReader["sayac_carpan"];
+            }
+            sayacTable.Rows.Add();
+            gunlukTable.Rows.Add(carpanRow);
+
+            sayacReader.Close();
+
+
+
 
             st.Stop();
             listBox1.Items.Add("For Öncesi: " + st.ElapsedMilliseconds);
@@ -131,8 +149,13 @@ namespace SayacRapor
                 gunlukRow["TARIH"] = dinamikTarih;
                 while (dinamikReader.Read())
                 {
+                    int carpan;
                     string indexName = dinamikReader["ISIM"].ToString();
                     string indexTarih = dinamikReader["TARIH"].ToString();
+                    if (gunlukTable.Columns.IndexOf(indexName) != -1)
+                        carpan = Convert.ToInt32(gunlukTable.Rows[0][indexName]);
+                    else
+                        carpan = 1;
                     double KWH = Convert.ToDouble(dinamikReader["KWH"]);
                     int nameIndex = sayacTable.Columns.IndexOf(indexName);
                     int tarihIndex = colDate.IndexOf(indexTarih) + 1;
@@ -147,7 +170,7 @@ namespace SayacRapor
 
                     if (nameIndex != -1)
                     {
-                        double gunlukTuketim = Math.Round((KWH - oncekiKWH), 3);
+                        double gunlukTuketim = Math.Round(((KWH - oncekiKWH)*carpan), 3);
                         sayacRow[indexName] = KWH;
                         gunlukRow[indexName] = gunlukTuketim;
                     }
@@ -305,6 +328,11 @@ namespace SayacRapor
         {
             timer1.Interval = 10000;
             statusLabel.Text = "";
+        }
+
+        private void btnOtomatikDoldur_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void dataViewSayac_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
