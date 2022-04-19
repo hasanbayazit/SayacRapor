@@ -46,6 +46,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabSayacGoruntule.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataViewSettings)).BeginInit();
@@ -59,6 +60,7 @@
             this.tabControl1.Controls.Add(this.tabSayacEkle);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(975, 615);
@@ -66,11 +68,13 @@
             // 
             // tabSayacGoruntule
             // 
+            this.tabSayacGoruntule.Controls.Add(this.button1);
             this.tabSayacGoruntule.Controls.Add(this.btnSayacSil);
             this.tabSayacGoruntule.Controls.Add(this.dataViewSettings);
             this.tabSayacGoruntule.Location = new System.Drawing.Point(4, 25);
+            this.tabSayacGoruntule.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabSayacGoruntule.Name = "tabSayacGoruntule";
-            this.tabSayacGoruntule.Padding = new System.Windows.Forms.Padding(3);
+            this.tabSayacGoruntule.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabSayacGoruntule.Size = new System.Drawing.Size(967, 586);
             this.tabSayacGoruntule.TabIndex = 0;
             this.tabSayacGoruntule.Text = "Sayacları Görüntüle";
@@ -80,16 +84,20 @@
             // 
             this.btnSayacSil.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSayacSil.Location = new System.Drawing.Point(743, 514);
+            this.btnSayacSil.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnSayacSil.Name = "btnSayacSil";
-            this.btnSayacSil.Size = new System.Drawing.Size(194, 42);
+            this.btnSayacSil.Size = new System.Drawing.Size(195, 42);
             this.btnSayacSil.TabIndex = 1;
             this.btnSayacSil.Text = "Seçilen Sayacı Sil";
             this.btnSayacSil.UseVisualStyleBackColor = true;
+            this.btnSayacSil.Click += new System.EventHandler(this.btnSayacSil_Click);
             // 
             // dataViewSettings
             // 
+            this.dataViewSettings.AllowUserToAddRows = false;
             this.dataViewSettings.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataViewSettings.Location = new System.Drawing.Point(6, 6);
+            this.dataViewSettings.Location = new System.Drawing.Point(5, 6);
+            this.dataViewSettings.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dataViewSettings.Name = "dataViewSettings";
             this.dataViewSettings.RowHeadersWidth = 51;
             this.dataViewSettings.RowTemplate.Height = 24;
@@ -115,24 +123,26 @@
             this.tabSayacEkle.Controls.Add(this.label2);
             this.tabSayacEkle.Controls.Add(this.label1);
             this.tabSayacEkle.Location = new System.Drawing.Point(4, 25);
+            this.tabSayacEkle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabSayacEkle.Name = "tabSayacEkle";
-            this.tabSayacEkle.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSayacEkle.Size = new System.Drawing.Size(943, 562);
+            this.tabSayacEkle.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabSayacEkle.Size = new System.Drawing.Size(967, 586);
             this.tabSayacEkle.TabIndex = 1;
             this.tabSayacEkle.Text = "Sayaç Ekle";
             this.tabSayacEkle.UseVisualStyleBackColor = true;
             // 
             // txtSayacCarpan
             // 
-            this.txtSayacCarpan.Location = new System.Drawing.Point(380, 83);
+            this.txtSayacCarpan.Location = new System.Drawing.Point(380, 82);
+            this.txtSayacCarpan.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtSayacCarpan.Name = "txtSayacCarpan";
             this.txtSayacCarpan.Size = new System.Drawing.Size(211, 22);
-            this.txtSayacCarpan.TabIndex = 13;
+            this.txtSayacCarpan.TabIndex = 2;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(278, 86);
+            this.label5.Location = new System.Drawing.Point(277, 86);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(96, 16);
             this.label5.TabIndex = 12;
@@ -142,9 +152,10 @@
             // 
             this.radioIsitici.AutoSize = true;
             this.radioIsitici.Location = new System.Drawing.Point(380, 167);
+            this.radioIsitici.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.radioIsitici.Name = "radioIsitici";
             this.radioIsitici.Size = new System.Drawing.Size(102, 20);
-            this.radioIsitici.TabIndex = 11;
+            this.radioIsitici.TabIndex = 5;
             this.radioIsitici.TabStop = true;
             this.radioIsitici.Text = "Isıtıcı Sayacı";
             this.radioIsitici.UseVisualStyleBackColor = true;
@@ -152,10 +163,11 @@
             // radioMotor
             // 
             this.radioMotor.AutoSize = true;
-            this.radioMotor.Location = new System.Drawing.Point(484, 167);
+            this.radioMotor.Location = new System.Drawing.Point(496, 167);
+            this.radioMotor.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.radioMotor.Name = "radioMotor";
             this.radioMotor.Size = new System.Drawing.Size(107, 20);
-            this.radioMotor.TabIndex = 10;
+            this.radioMotor.TabIndex = 6;
             this.radioMotor.TabStop = true;
             this.radioMotor.Text = "Motor Sayacı";
             this.radioMotor.UseVisualStyleBackColor = true;
@@ -163,16 +175,18 @@
             // txtSayacSira
             // 
             this.txtSayacSira.Location = new System.Drawing.Point(380, 28);
+            this.txtSayacSira.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtSayacSira.Name = "txtSayacSira";
             this.txtSayacSira.Size = new System.Drawing.Size(211, 22);
-            this.txtSayacSira.TabIndex = 9;
+            this.txtSayacSira.TabIndex = 1;
             // 
             // btnSayacEkle
             // 
             this.btnSayacEkle.Location = new System.Drawing.Point(380, 208);
+            this.btnSayacEkle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnSayacEkle.Name = "btnSayacEkle";
             this.btnSayacEkle.Size = new System.Drawing.Size(211, 78);
-            this.btnSayacEkle.TabIndex = 8;
+            this.btnSayacEkle.TabIndex = 7;
             this.btnSayacEkle.Text = "Sayaç Ekle";
             this.btnSayacEkle.UseVisualStyleBackColor = true;
             this.btnSayacEkle.Click += new System.EventHandler(this.btnSayacEkle_Click);
@@ -180,23 +194,26 @@
             // txtSayacExtra
             // 
             this.txtSayacExtra.Location = new System.Drawing.Point(380, 139);
+            this.txtSayacExtra.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtSayacExtra.Name = "txtSayacExtra";
             this.txtSayacExtra.Size = new System.Drawing.Size(211, 22);
-            this.txtSayacExtra.TabIndex = 7;
+            this.txtSayacExtra.TabIndex = 4;
             // 
             // txtSayacMin
             // 
             this.txtSayacMin.Location = new System.Drawing.Point(380, 111);
+            this.txtSayacMin.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtSayacMin.Name = "txtSayacMin";
             this.txtSayacMin.Size = new System.Drawing.Size(211, 22);
-            this.txtSayacMin.TabIndex = 6;
+            this.txtSayacMin.TabIndex = 3;
             // 
             // txtSayacIsım
             // 
             this.txtSayacIsım.Location = new System.Drawing.Point(380, 55);
+            this.txtSayacIsım.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtSayacIsım.Name = "txtSayacIsım";
             this.txtSayacIsım.Size = new System.Drawing.Size(211, 22);
-            this.txtSayacIsım.TabIndex = 5;
+            this.txtSayacIsım.TabIndex = 1;
             // 
             // label4
             // 
@@ -228,11 +245,23 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(298, 58);
+            this.label1.Location = new System.Drawing.Point(299, 58);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(76, 16);
             this.label1.TabIndex = 0;
             this.label1.Text = "Sayaç İsim:";
+            // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(542, 514);
+            this.button1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(195, 42);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "Yeni Satır Ekle";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // SayacSettings
             // 
@@ -240,6 +269,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(975, 615);
             this.Controls.Add(this.tabControl1);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "SayacSettings";
             this.Text = "Sayaç Ayarları";
             this.Load += new System.EventHandler(this.SayacSettings_Load);
@@ -273,5 +303,6 @@
         private System.Windows.Forms.RadioButton radioMotor;
         private System.Windows.Forms.TextBox txtSayacCarpan;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button button1;
     }
 }

@@ -60,6 +60,51 @@ namespace SayacRapor
             veriGetir();
         }
 
+        private void btnSayacSil_Click(object sender, EventArgs e)
+        {
+            int row = Convert.ToInt32(dataViewSettings.CurrentCell.RowIndex);
+            int col = Convert.ToInt32(dataViewSettings.CurrentCell.ColumnIndex);
+            int id = Convert.ToInt16(dataViewSettings.Rows[row].Cells["id"].Value);
+            string isim = dataViewSettings.Rows[row].Cells["sayac_isim"].Value.ToString();
+
+            string deleteString = "DELETE FROM SAYAC_AYAR WHERE id = @id";
+            SqlCommand deleteCommand = new SqlCommand(deleteString, con);
+            deleteCommand.Parameters.Add(new SqlParameter("id", id));
+
+            if (con.State != ConnectionState.Open)
+            {
+                con.Open();
+            }
+            DialogResult silmeOnayi = new DialogResult();
+            silmeOnayi = MessageBox.Show(isim + " sayacını silmek istiyor musunuz?", "Sayaç silme onayı", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if(silmeOnayi == DialogResult.Yes)
+            {
+                deleteCommand.ExecuteNonQuery();
+                MessageBox.Show("Silme işlemi başarılı.");
+            }
+            if (con.State != ConnectionState.Closed)
+            {
+                con.Close();
+            }
+            veriGetir();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string insertString = "INSERT INTO SAYAC_AYAR (sayac_isim, sayac_carpan, sayac_min_tuketim, sayac_ekstra_tuketim, sayac_sira, sayac_motor, sayac_id, makine_adi) VALUES ('','','','','','','','')";
+            SqlCommand insertCommand = new SqlCommand(insertString, con);
+            if (con.State != ConnectionState.Open)
+            {
+                con.Open();
+            }
+            insertCommand.ExecuteNonQuery();
+            if (con.State != ConnectionState.Closed)
+            {
+                con.Close();
+            }
+            veriGetir();
+        }
+
         private void btnSayacEkle_Click(object sender, EventArgs e)
         {
             if(txtSayacIsım.Text != "")
@@ -205,6 +250,7 @@ namespace SayacRapor
 
         void sayacEkle()
         {
+
             if (radioIsitici.Checked)
             {
                 sayacMotorMu = false;
@@ -237,6 +283,8 @@ namespace SayacRapor
         
         void veriGetir()
         {
+            DataTable sayacAyarTable = new DataTable();
+            sayacAyarTable.Clear();
             if (con.State != ConnectionState.Open)
             {
                 con.Open();
@@ -244,9 +292,8 @@ namespace SayacRapor
             string selectString = "Select * From SAYAC_AYAR";
             SqlCommand command = new SqlCommand(selectString, con);
             SqlDataAdapter dataAdapter = new SqlDataAdapter(command);
-            DataTable dataTable = new DataTable();
-            dataAdapter.Fill(dataTable);
-            dataViewSettings.DataSource = dataTable;
+            dataAdapter.Fill(sayacAyarTable);
+            dataViewSettings.DataSource = sayacAyarTable;
             if (con.State != ConnectionState.Closed)
             {
                 con.Close();

@@ -92,7 +92,7 @@
             this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox2.Size = new System.Drawing.Size(1224, 100);
+            this.groupBox2.Size = new System.Drawing.Size(1729, 100);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             // 
@@ -106,24 +106,30 @@
             this.btnOtomatikDoldur.TabIndex = 11;
             this.btnOtomatikDoldur.Text = "Otomatik Doldur";
             this.btnOtomatikDoldur.UseVisualStyleBackColor = true;
+            this.btnOtomatikDoldur.Visible = false;
             this.btnOtomatikDoldur.Click += new System.EventHandler(this.btnOtomatikDoldur_Click);
             // 
             // listBox1
             // 
+            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 16;
-            this.listBox1.Location = new System.Drawing.Point(764, 25);
-            this.listBox1.Margin = new System.Windows.Forms.Padding(4);
+            this.listBox1.Location = new System.Drawing.Point(1232, 21);
+            this.listBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(241, 68);
             this.listBox1.TabIndex = 10;
             // 
             // listBox2
             // 
+            this.listBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listBox2.FormattingEnabled = true;
             this.listBox2.ItemHeight = 16;
-            this.listBox2.Location = new System.Drawing.Point(1015, 25);
-            this.listBox2.Margin = new System.Windows.Forms.Padding(4);
+            this.listBox2.Location = new System.Drawing.Point(1481, 21);
+            this.listBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.listBox2.Name = "listBox2";
             this.listBox2.Size = new System.Drawing.Size(241, 68);
             this.listBox2.TabIndex = 9;
@@ -192,14 +198,13 @@
             // 
             // panel1
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.AutoScroll = true;
             this.panel1.Controls.Add(this.dataViewSayac);
-            this.panel1.Location = new System.Drawing.Point(3, 2);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1213, 400);
+            this.panel1.Size = new System.Drawing.Size(1726, 470);
             this.panel1.TabIndex = 12;
             // 
             // dataViewSayac
@@ -214,7 +219,7 @@
             this.dataViewSayac.Name = "dataViewSayac";
             this.dataViewSayac.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataViewSayac.RowTemplate.Height = 24;
-            this.dataViewSayac.Size = new System.Drawing.Size(1213, 400);
+            this.dataViewSayac.Size = new System.Drawing.Size(1726, 470);
             this.dataViewSayac.TabIndex = 7;
             this.dataViewSayac.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataViewSayac_CellBeginEdit);
             this.dataViewSayac.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataViewSayac_CellMouseClick);
@@ -223,18 +228,16 @@
             // 
             // panel2
             // 
-            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.Controls.Add(this.dataViewGunluk);
-            this.panel2.Location = new System.Drawing.Point(3, 407);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(0, 508);
             this.panel2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1213, 450);
+            this.panel2.Size = new System.Drawing.Size(1726, 470);
             this.panel2.TabIndex = 13;
             // 
             // dataViewGunluk
             // 
-            this.dataViewGunluk.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dataViewGunluk.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataViewGunluk.Cursor = System.Windows.Forms.Cursors.Default;
             this.dataViewGunluk.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -244,7 +247,7 @@
             this.dataViewGunluk.Name = "dataViewGunluk";
             this.dataViewGunluk.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataViewGunluk.RowTemplate.Height = 24;
-            this.dataViewGunluk.Size = new System.Drawing.Size(1213, 450);
+            this.dataViewGunluk.Size = new System.Drawing.Size(1726, 470);
             this.dataViewGunluk.TabIndex = 8;
             this.dataViewGunluk.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataViewGunluk_CellMouseClick);
             this.dataViewGunluk.Scroll += new System.Windows.Forms.ScrollEventHandler(this.dataViewGunluk_Scroll);
@@ -258,7 +261,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1445, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1781, 30);
             this.menuStrip1.TabIndex = 14;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -274,8 +277,8 @@
             this.yöneticiModuToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.açıkKapatToolStripMenuItem});
             this.yöneticiModuToolStripMenuItem.Name = "yöneticiModuToolStripMenuItem";
-            this.yöneticiModuToolStripMenuItem.Size = new System.Drawing.Size(118, 24);
-            this.yöneticiModuToolStripMenuItem.Text = "Yönetici Modu";
+            this.yöneticiModuToolStripMenuItem.Size = new System.Drawing.Size(141, 24);
+            this.yöneticiModuToolStripMenuItem.Text = "Düzenleme Modu";
             // 
             // açıkKapatToolStripMenuItem
             // 
@@ -295,7 +298,7 @@
             this.panel3.Location = new System.Drawing.Point(15, 137);
             this.panel3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1223, 862);
+            this.panel3.Size = new System.Drawing.Size(1728, 980);
             this.panel3.TabIndex = 15;
             // 
             // statusStrip1
@@ -303,10 +306,10 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 999);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 1117);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 19, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1445, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1781, 22);
             this.statusStrip1.TabIndex = 16;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -325,7 +328,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(1466, 870);
+            this.ClientSize = new System.Drawing.Size(1802, 1084);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.groupBox2);
