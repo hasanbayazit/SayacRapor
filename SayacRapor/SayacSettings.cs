@@ -58,6 +58,7 @@ namespace SayacRapor
         private void SayacSettings_Load(object sender, EventArgs e)
         {
             veriGetir();
+            this.AcceptButton = buttonEkstraBitir;
         }
 
         private void btnSayacSil_Click(object sender, EventArgs e)
@@ -103,6 +104,11 @@ namespace SayacRapor
                 con.Close();
             }
             veriGetir();
+        }
+
+        private void buttonEkstraBitir_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Bitti");
         }
 
         private void btnSayacEkle_Click(object sender, EventArgs e)

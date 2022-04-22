@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Data;
+using System.Collections;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
@@ -17,7 +18,7 @@ namespace SayacRapor
             InitializeComponent();
         }
         Stopwatch st = new Stopwatch();
-        string[,,] dizi;
+        string dinamikTarih;
         ArrayList minimumTuketim = new ArrayList();
         ArrayList ortalamaBolen = new ArrayList();
         ArrayList gunlukToplam = new ArrayList();
@@ -37,9 +38,7 @@ namespace SayacRapor
         string oncekiGun;
         string ilkGunString;
         string startDate, endDate;
-        int sayi;
-        //string dbName = "Sayaclar";
-        string dbName = "SayaclarTest";
+        int haftaSayisi, sayi;
         int rowSayi = 0;
 
         Boolean adminMode = false;
@@ -49,18 +48,45 @@ namespace SayacRapor
         DateTime ilkGunDateTime, startZaman, endZaman;
         TimeSpan zaman;
         /*public static string conString = "Data Source=DESKTOP-VJMT9PK\\SQLEXPRESS;Initial Catalog=SayaclarTest;User ID=sa;Password=a123456*";*/
-        public static string conString = "Data Source=192.168.2.123;Initial Catalog=SayaclarTest;User ID=sa;Password=a123456*";
-        SqlConnection con = new SqlConnection(conString);
+        string serverIP, tabloAdi, userID, password;
+        public static string conString;
+        SqlConnection con;
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            panel3.Size = new Size(panel3.Width, 751);
-            this.AutoScroll = true;
-            startDate = DateTime.Now.ToString("yyyy-MM") + "-01";
-            endDate = DateTime.Now.ToString("yyyy-MM-dd");
-            datePickerStart.Value = DateTime.Parse(DateTime.Now.ToString("yyyy-MM") + "-01");
-            ayar();
-            sayacGetir(startDate, endDate);
+            groupBox2.Width = Screen.PrimaryScreen.Bounds.Width - 50;
+            panel3.Width = Screen.PrimaryScreen.Bounds.Width - 50;
+            listBox3.Location = new Point(listBox2.Location.X - listBox3.Width - 5, listBox2.Location.Y);
+            listBox1.Location = new Point(listBox3.Location.X - listBox1.Width - 5 ,listBox2.Location.Y);
+
+            System.Threading.Thread.Sleep(100);
+            settingsYukle();
+            conString = "Data Source=" + serverIP + ";Initial Catalog=" + tabloAdi + ";User ID=" + userID + ";Password=" + password;
+            con = new SqlConnection(conString);
+            try
+            {
+                con.Open();
+                gunlukGrafik gGrafikForm = new gunlukGrafik();
+                this.AutoScroll = true;
+                startDate = DateTime.Now.ToString("yyyy-MM") + "-01";
+                endDate = DateTime.Now.ToString("yyyy-MM-dd");
+                datePickerStart.Value = DateTime.Parse(DateTime.Now.ToString("yyyy-MM") + "-01");
+                ayar();
+                sayacGetir(startDate, endDate);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Sunucuya bağlanılamadı.\n" +ex);
+                con.Close();
+            }
+        }
+
+        private void settingsYukle()
+        {
+            serverIP = Settings.Default.serverIP;
+            tabloAdi = Settings.Default.tabloAdi;
+            userID = Settings.Default.userID;
+            password = Settings.Default.password;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -71,7 +97,7 @@ namespace SayacRapor
             sayacGetir(startDate, endDate);
         }
 
-        void sayacGetir(string sDate, string eDate)
+        public void sayacGetir(string sDate, string eDate)
         {
             rowSayi = 0;
             minimumTuketim.Clear();
@@ -91,10 +117,7 @@ namespace SayacRapor
             {
                 con.Open();
             }
-            string dinamikIsim = "";
-            string dinamikTarih = "";
             string tarihString = "SELECT DISTINCT TARIH From SAYAC_BILGISI WHERE TARIH >= '" + sDate + "' AND TARIH <= '" + eDate + "' AND KWH <> 0 ORDER BY TARIH";
-            string fullString = "SELECT * From SAYAC_BILGISI WHERE TARIH >= '" + sDate + "' AND TARIH <= '" + eDate + "' AND KWH <> 0 ORDER BY ISIM,TARIH DESC KWH ASC";
             sayacTable.Columns.Add("TARIH");
             gunlukTable.Columns.Add("TARIH");
 
@@ -193,6 +216,8 @@ namespace SayacRapor
                         {
                             renklendirCol.Add(nameIndex);
                             renklendirRow.Add(tarihIndex);
+                            if(listBox3.Items.IndexOf(indexName) == -1)
+                                listBox3.Items.Add(indexName);
                         }
                     }
 
@@ -205,6 +230,8 @@ namespace SayacRapor
                         {
                             renklendirCol.Add(nameIndex);
                             renklendirRow.Add(tarihIndex);
+                            if (listBox3.Items.IndexOf(indexName) == -1)
+                                listBox3.Items.Add(indexName);
                         }
                     }
                     else
@@ -279,6 +306,8 @@ namespace SayacRapor
 
             for (int i = 0; i < dataViewSayac.Columns.Count; i++)
             {
+                dataViewSayac.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                dataViewGunluk.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
                 int w = dataViewSayac.Columns[i].Width;
                 dataViewGunluk.Columns[i].Width = w;
             }
@@ -323,19 +352,27 @@ namespace SayacRapor
 
         void ayar()
         {
+            haftaSayisi = 1;
             ilkGunString = datePickerStart.Value.AddDays(-1).ToString("yyyy-MM-dd");
             ilkGunDateTime = datePickerStart.Value;
             startZaman = datePickerStart.Value;
             endZaman = datePickerEnd.Value;
             zaman = endZaman - startZaman;
             sayi = zaman.Days + 1;
+            int numberOfDays = (endZaman - startZaman).Days;
+            for (int days = 0; days < numberOfDays; days++)
+            {
+                DateTime date = startZaman.AddDays(days);
+                if (date.DayOfWeek == DayOfWeek.Monday)
+                    haftaSayisi++;
+            }
         }
 
         private void datePickerStart_ValueChanged(object sender, EventArgs e)
         {
             DateTime startDate = datePickerStart.Value;
             DateTime endDate = datePickerEnd.Value;
-            if (startDate > endDate)
+            if (startDate >= endDate)
             {
                 datePickerEnd.Value = DateTime.Now;
             }
@@ -443,7 +480,7 @@ namespace SayacRapor
         private void açıkKapatToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Font defaultFont = SystemFonts.DefaultFont;
-            if (açıkKapatToolStripMenuItem.Text == "(Açık) - Kapat")
+            if (adminMode)
             {
                 adminMode = false;
                 açıkKapatToolStripMenuItem.Text = "(Kapalı) - Aç";
@@ -454,7 +491,7 @@ namespace SayacRapor
                 btnOtomatikDoldur.Visible = false;
                 timer1.Start();
             }
-            else if(açıkKapatToolStripMenuItem.Text == "(Kapalı) - Aç")
+            else if(!adminMode)
             {
                 adminMode = true;
                 açıkKapatToolStripMenuItem.Text = "(Açık) - Kapat";
@@ -510,32 +547,57 @@ namespace SayacRapor
                         degerBaslangic = Convert.ToDouble(sayacTable.Rows[indexBaslangic][indexKolon]);
                         degerOnceki = Convert.ToDouble(sayacTable.Rows[indexAktif - 1][indexKolon]);
                         degerBitis = Convert.ToDouble(sayacTable.Rows[indexBitis][indexKolon]);
-
+                        Decimal eskiKWHDec;
                         double hesaplananDeger = Math.Round(((degerBitis - degerBaslangic) / bolen) + degerOnceki, 3);
+                        if (sayacTable.Rows[indexAktif][indexKolon].ToString() == "")
+                            eskiKWHDec = -1;
+                        else
+                            eskiKWHDec = Convert.ToDecimal(sayacTable.Rows[indexAktif][indexKolon]);
+                        Decimal yeniKWHDec = Convert.ToDecimal(hesaplananDeger);
                         sayacTable.Rows[indexAktif][indexKolon] = hesaplananDeger;
 
                         string tmpIsim = sayacTable.Columns[indexKolon].ColumnName;
                         string tmpTarih = sayacTable.Rows[indexAktif]["TARIH"].ToString();
-
-                        Decimal yeniKWHDec = Convert.ToDecimal(hesaplananDeger);
-                        string insertString = "INSERT INTO SAYAC_BILGISI (ISIM, KWH, TARIH, SAAT) VALUES ('" + tmpIsim + "', @yeniKWH, '" + tmpTarih + "', '8')";
-                        SqlCommand insertCommand = new SqlCommand(insertString, con);
-                        insertCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
-                        if (con.State != ConnectionState.Open)
+                        if (eskiKWHDec == -1)
                         {
-                            con.Open();
+                            string insertString = "INSERT INTO SAYAC_BILGISI (ISIM, KWH, TARIH, SAAT) VALUES ('" + tmpIsim + "', @yeniKWH, '" + tmpTarih + "', '8')";
+                            SqlCommand insertCommand = new SqlCommand(insertString, con);
+                            insertCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
+                            if (con.State != ConnectionState.Open)
+                                con.Open();
+                            insertCommand.ExecuteNonQuery();
+                            if (con.State != ConnectionState.Closed)
+                                con.Close();
                         }
-                        insertCommand.ExecuteNonQuery();
-                        if (con.State != ConnectionState.Closed)
+                        else
                         {
-                            con.Close();
+                            string updateString = "UPDATE SAYAC_BILGISI SET KWH = @yeniKWH WHERE ISIM = '" + tmpIsim + "' AND TARIH = '" + tmpTarih + "' AND KWH = '"+eskiKWHDec+"'";
+                            SqlCommand updateCommand = new SqlCommand(updateString, con);
+                            updateCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
+                            updateCommand.Parameters.Add(new SqlParameter("eskiKWH", eskiKWHDec));
+                            if (con.State != ConnectionState.Open)
+                                con.Open();
+                            updateCommand.ExecuteNonQuery();
+                            if (con.State != ConnectionState.Closed)
+                                con.Close();
                         }
+                        
                     }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Hata: " + ex);
                 }
+            }
+        }
+
+        private void datePickerEnd_ValueChanged(object sender, EventArgs e)
+        {
+            DateTime startDate = datePickerStart.Value;
+            DateTime endDate = datePickerEnd.Value;
+            if (startDate >= endDate)
+            {
+                datePickerStart.Value = datePickerEnd.Value;
             }
         }
 
@@ -562,24 +624,53 @@ namespace SayacRapor
             }
         }
 
+        private void haftalıkGrafikToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bool stop = false;
+            while(!stop)
+            {
+                DateTime date = startZaman;
+                if (date.DayOfWeek == DayOfWeek.Monday)
+                    stop = true;
+                else
+                    startZaman = startZaman.AddDays(-1);
+            }
+            haftalikGrafik hGrafikFrom = new haftalikGrafik();
+            hGrafikFrom.Show();
+        }
+
+        private void günlükGrafikToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            gunlukGrafik gGrafikForm = new gunlukGrafik();
+            gGrafikForm.gelenTablo = gunlukTable;
+            gGrafikForm.Show();
+        }
+
         private void dataViewSayac_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            if(adminMode)
+            try
             {
-                int rowIndex = dataViewSayac.CurrentCell.RowIndex;
-                int colIndex = dataViewSayac.CurrentCell.ColumnIndex;
-                sayacIsim = dataViewSayac.Columns[colIndex].Name;
-                tarih = dataViewSayac.Rows[rowIndex].Cells["TARIH"].Value.ToString();
-                if (dataViewSayac.Rows[rowIndex].Cells[sayacIsim].Value.ToString() != "")
+                if (adminMode)
                 {
-                    eskiKWH = Convert.ToDouble(dataViewSayac.Rows[rowIndex].Cells[sayacIsim].Value);
-                    insertMode = false;
+                    int rowIndex = dataViewSayac.CurrentCell.RowIndex;
+                    int colIndex = dataViewSayac.CurrentCell.ColumnIndex;
+                    sayacIsim = dataViewSayac.Columns[colIndex].Name;
+                    tarih = dataViewSayac.Rows[rowIndex].Cells["TARIH"].Value.ToString();
+                    if (dataViewSayac.Rows[rowIndex].Cells[sayacIsim].Value.ToString() != "")
+                    {
+                        eskiKWH = Convert.ToDouble(dataViewSayac.Rows[rowIndex].Cells[sayacIsim].Value);
+                        insertMode = false;
+                    }
+                    else
+                    {
+                        insertMode = true;
+                        eskiKWH = -1;
+                    }
                 }
-                else
-                {
-                    insertMode = true;
-                    eskiKWH = -1;
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
             }
         }
 
@@ -656,13 +747,35 @@ namespace SayacRapor
 
         private void ayarlarToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SayacSettings frm = new SayacSettings();
-            frm.Show();
+
+            FormCollection fc = Application.OpenForms;
+            foreach (Form frm in fc)
+            {
+                if (frm.Name == "SayacSettings")
+                {
+                    frm.Activate();
+                    return;
+                }
+            }
+
+            SayacSettings sayacSettings = new SayacSettings();
+            sayacSettings.Show();
+            /*
+            SayacSettings sayacSettings = new SayacSettings();
+            if (Application.OpenForms["SayacSettings"] != null)
+            {
+                sayacSettings.Activate();
+            }
+            else
+            {
+                sayacSettings.Show();
+            }*/
         }
 
         void panelBoyut()
         {
-            panel3.Height = 470 + 470 + 10;
+            panel2.Location = new Point(panel1.Location.X, panel1.Location.Y + panel1.Height + 100);
+            panel3.Height = panel1.Height + panel2.Height + 10;
         }
     }
 }
