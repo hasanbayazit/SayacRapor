@@ -74,7 +74,7 @@
             this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox2.Size = new System.Drawing.Size(1837, 138);
+            this.groupBox2.Size = new System.Drawing.Size(1795, 138);
             this.groupBox2.TabIndex = 7;
             this.groupBox2.TabStop = false;
             // 
@@ -256,12 +256,15 @@
             // 
             // menuStrip1
             // 
+            this.menuStrip1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.menuStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.etiketleriGösterGizleToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1861, 30);
+            this.menuStrip1.Size = new System.Drawing.Size(335, 30);
             this.menuStrip1.TabIndex = 11;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -273,7 +276,7 @@
             this.motorGösterGizleToolStripMenuItem,
             this.fanGösterGizleToolStripMenuItem});
             this.etiketleriGösterGizleToolStripMenuItem.Name = "etiketleriGösterGizleToolStripMenuItem";
-            this.etiketleriGösterGizleToolStripMenuItem.Size = new System.Drawing.Size(175, 26);
+            this.etiketleriGösterGizleToolStripMenuItem.Size = new System.Drawing.Size(175, 24);
             this.etiketleriGösterGizleToolStripMenuItem.Text = "Etiketleri Göster / Gizle";
             // 
             // toplamGösterGizleToolStripMenuItem

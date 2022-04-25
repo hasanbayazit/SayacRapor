@@ -22,7 +22,6 @@ namespace SayacRapor
         int sayacSira, sayacMin, sayacExtra, sayacCarpan, id;
         bool sayacMotorMu;
         SqlConnection con = new SqlConnection(MainForm.conString);
-
         private void dataViewSettings_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             string updateString = "";
@@ -58,7 +57,8 @@ namespace SayacRapor
         private void SayacSettings_Load(object sender, EventArgs e)
         {
             veriGetir();
-            this.AcceptButton = buttonEkstraBitir;
+            ekstraTuketimGetir();
+            sayacIsimGetir();
         }
 
         private void btnSayacSil_Click(object sender, EventArgs e)
@@ -108,7 +108,15 @@ namespace SayacRapor
 
         private void buttonEkstraBitir_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Bitti");
+            int rowIndex = dataViewEkstra.CurrentCell.RowIndex;
+            int ekstraId = Convert.ToInt32(dataViewEkstra.Rows[rowIndex].Cells["id"].Value);
+            string bitisTarihi = dateTimeBitis2.Value.ToString("yyyy-MM-dd");
+            string updateString = "UPDATE SAYAC_EKSTRA SET bitis_tarihi = '" + bitisTarihi + "' WHERE id = '" + ekstraId + "'";
+            SqlCommand updateCommand = new SqlCommand(updateString, con);
+            con.Open();
+            updateCommand.ExecuteNonQuery();
+            con.Close();
+            ekstraTuketimGetir();
         }
 
         private void btnSayacEkle_Click(object sender, EventArgs e)
@@ -171,6 +179,44 @@ namespace SayacRapor
             }
         }
 
+        private void radioTumu_CheckedChanged(object sender, EventArgs e)
+        {
+            ekstraTuketimGetir();
+        }
+
+        private void radioAktif_CheckedChanged(object sender, EventArgs e)
+        {
+            ekstraTuketimGetir();
+        }
+
+        private void buttonEkstraBaslat_Click(object sender, EventArgs e)
+        {
+            string baslangicTarihi = dateTimeBaslangic.Value.ToString("yyyy-MM-dd");
+            string bitisTarihi = dateTimeBitis.Value.ToString("yyyy-MM-dd");
+            string sayacIsim = cmbSayac.Text;
+            decimal ekstraTuketim = Math.Round(Convert.ToDecimal(txtEkstraKWH.Text),3);
+            string ekstraInsert;
+            if(checkBitis.Checked)
+                ekstraInsert = "INSERT INTO SAYAC_EKSTRA (baslangic_tarihi, bitis_tarihi, sayac_isim, ekstra_tuketim) VALUES (@baslangicTarihi,@bitisTarihi,@sayacIsim,@ekstraTuketim)";
+            else
+                ekstraInsert = "INSERT INTO SAYAC_EKSTRA (baslangic_tarihi, sayac_isim, ekstra_tuketim) VALUES (@baslangicTarihi,@sayacIsim,@ekstraTuketim)";
+
+            SqlCommand ekstraCommand = new SqlCommand(ekstraInsert, con);
+            ekstraCommand.Parameters.Add(new SqlParameter("baslangicTarihi", baslangicTarihi));
+            ekstraCommand.Parameters.Add(new SqlParameter("bitisTarihi", bitisTarihi));
+            ekstraCommand.Parameters.Add(new SqlParameter("sayacIsim", sayacIsim));
+            ekstraCommand.Parameters.Add(new SqlParameter("ekstraTuketim", ekstraTuketim));
+            con.Open();
+            ekstraCommand.ExecuteNonQuery();
+            con.Close();
+            ekstraTuketimGetir();
+            MessageBox.Show("Ekstra tüketim ekleme başarılı.");
+            checkBitis.Checked = false;
+            radioTumu.Checked = true;
+            cmbSayac.Text = "";
+            txtEkstraKWH.Clear();
+        }
+
         private void dataViewSettings_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
             if (adminMode)
@@ -188,6 +234,43 @@ namespace SayacRapor
                     eskiBilgi = "";
                 }
             }
+        }
+
+        private void checkBitis_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBitis.Checked)
+                dateTimeBitis.Enabled = true;
+            else
+                dateTimeBitis.Enabled = false;
+        }
+
+        private void btnEkstraSil_Click(object sender, EventArgs e)
+        {
+            int row = Convert.ToInt32(dataViewEkstra.CurrentCell.RowIndex);
+            int col = Convert.ToInt32(dataViewEkstra.CurrentCell.ColumnIndex);
+            int id = Convert.ToInt16(dataViewEkstra.Rows[row].Cells["id"].Value);
+            string isim = dataViewEkstra.Rows[row].Cells["sayac_isim"].Value.ToString();
+
+            string deleteString = "DELETE FROM SAYAC_EKSTRA WHERE id = @id";
+            SqlCommand deleteCommand = new SqlCommand(deleteString, con);
+            deleteCommand.Parameters.Add(new SqlParameter("id", id));
+
+            if (con.State != ConnectionState.Open)
+            {
+                con.Open();
+            }
+            DialogResult silmeOnayi = new DialogResult();
+            silmeOnayi = MessageBox.Show(isim + " ekstra tüketimi silmek istiyor musunuz?", "Ekstra Tüketim Silme Onayı", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (silmeOnayi == DialogResult.Yes)
+            {
+                deleteCommand.ExecuteNonQuery();
+                MessageBox.Show("Silme işlemi başarılı.");
+            }
+            if (con.State != ConnectionState.Closed)
+            {
+                con.Close();
+            }
+            ekstraTuketimGetir();
         }
 
         private void dataViewSettings_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -289,20 +372,27 @@ namespace SayacRapor
         
         void veriGetir()
         {
-            DataTable sayacAyarTable = new DataTable();
-            sayacAyarTable.Clear();
-            if (con.State != ConnectionState.Open)
+            try
             {
-                con.Open();
+                DataTable sayacAyarTable = new DataTable();
+                sayacAyarTable.Clear();
+                if (con.State != ConnectionState.Open)
+                {
+                    con.Open();
+                }
+                string selectString = "Select * From SAYAC_AYAR";
+                SqlCommand command = new SqlCommand(selectString, con);
+                SqlDataAdapter dataAdapter = new SqlDataAdapter(command);
+                dataAdapter.Fill(sayacAyarTable);
+                dataViewSettings.DataSource = sayacAyarTable;
+                if (con.State != ConnectionState.Closed)
+                {
+                    con.Close();
+                }
             }
-            string selectString = "Select * From SAYAC_AYAR";
-            SqlCommand command = new SqlCommand(selectString, con);
-            SqlDataAdapter dataAdapter = new SqlDataAdapter(command);
-            dataAdapter.Fill(sayacAyarTable);
-            dataViewSettings.DataSource = sayacAyarTable;
-            if (con.State != ConnectionState.Closed)
+            catch (Exception ex)
             {
-                con.Close();
+                MessageBox.Show("Zaman aşımı." + ex);
             }
         }
 
@@ -320,6 +410,42 @@ namespace SayacRapor
                 if (!Char.IsNumber(chr)) return false;
             }
             return true;
+        }
+        void ekstraTuketimGetir()
+        {
+            DataTable ekstraTable = new DataTable();
+            ekstraTable.Clear();
+            if (con.State != ConnectionState.Open)
+            {
+                con.Open();
+            }
+            string dateNow = DateTime.Now.ToString("yyyy-MM-dd");
+            string ekstraString = "";
+            if (radioTumu.Checked)
+                ekstraString = "SELECT * FROM SAYAC_EKSTRA ORDER BY baslangic_tarihi,bitis_tarihi";
+            else if (radioAktif.Checked)
+                ekstraString = "SELECT * FROM SAYAC_EKSTRA WHERE bitis_tarihi >= '" + dateNow + "' OR bitis_tarihi IS NULL ORDER BY bitis_tarihi,baslangic_tarihi";
+            SqlCommand ekstraCommand = new SqlCommand(ekstraString, con);
+            SqlDataAdapter ekstraAdapter = new SqlDataAdapter(ekstraCommand);
+            ekstraAdapter.Fill(ekstraTable);
+            dataViewEkstra.DataSource = ekstraTable;
+            if (con.State != ConnectionState.Closed)
+            {
+                con.Close();
+            }
+        }
+        void sayacIsimGetir()
+        {
+            con.Open();
+            cmbSayac.Items.Clear();
+            string sayacString = "SELECT sayac_isim FROM SAYAC_AYAR ORDER BY sayac_isim";
+            SqlCommand sayacCommand = new SqlCommand(sayacString, con);
+            SqlDataReader sayacReader = sayacCommand.ExecuteReader();
+            while(sayacReader.Read())
+            {
+                cmbSayac.Items.Add(sayacReader["sayac_isim"].ToString());
+            }
+            con.Close();
         }
     }
 }

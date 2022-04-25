@@ -19,6 +19,10 @@ namespace SayacRapor
         {
             InitializeComponent();
         }
+        ArrayList ekstraBaslangic = new ArrayList();
+        ArrayList ekstraBitis = new ArrayList();
+        ArrayList ekstraSayac = new ArrayList();
+        ArrayList ekstraKWH = new ArrayList();
         ArrayList haftaIsimleri = new ArrayList();
         ArrayList haftalikTuketim = new ArrayList();
         DateTime startDate, endDate, haftalikBaslangic, haftalikBitis;
@@ -68,6 +72,12 @@ namespace SayacRapor
             else
                 ortGG = false;
             grafikOlustur();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            timer1.Interval = 10000;
+            progressBar.Visible = false;
         }
 
         private void minimumGösterGizleToolStripMenuItem_Click(object sender, EventArgs e)
@@ -149,9 +159,22 @@ namespace SayacRapor
                 else
                     startDate = startDate.AddDays(-1);
             }
+            stop = false;
+            while(!stop)
+            {
+                DateTime date = endDate;
+                if (date.DayOfWeek == DayOfWeek.Sunday)
+                    stop = true;
+                else
+                    endDate = endDate.AddDays(1);
+            }
         }
         void haftaVerileriHesapla(DateTime sDay, DateTime eDay)
         {
+            progressBar.Visible = true;
+            progressBar.Minimum = 0;
+            progressBar.Maximum = 100;
+            progressBar.Value = 0;
             grafikTable.Clear();
             grafikTable.Columns.Clear();
             haftalikBaslangic = sDay;
@@ -180,78 +203,114 @@ namespace SayacRapor
             }
             //Hafta sayısını tabloya ekle<<
 
-
-            for (int i = 1; i <= haftaSayisi; i++)
+            progressBar.Value = 20;
+            try
             {
-                haftalikTuketim.Clear();
-                haftalikOrt = 0;
-                ortalamaBolen = 0;
-                haftalikBaslaStr = haftalikBaslangic.ToString("yyyy-MM-dd");
-                haftalikBitisStr = haftalikBitis.ToString("yyyy-MM-dd");
-                DateTime oncekiGunDT = haftalikBaslangic;
-                
-                for (int k = 0; k <= 6; k++)
+                aktifEkstraTuketimGetir();
+                for (int i = 1; i <= haftaSayisi; i++)
                 {
-                    string oncekiGun = oncekiGunDT.AddDays(-1).ToString("yyyy-MM-dd");
-                    string oncekiGunString = "SELECT * From SAYAC_BILGISI WHERE ISIM = '" + sayacAdi + "' AND TARIH = '" + oncekiGun + "' AND KWH <> 0 ORDER BY KWH ASC";
-                    SqlCommand oncekiGunCommand = new SqlCommand(oncekiGunString, con);
-                    SqlDataReader oncekiGunReader = oncekiGunCommand.ExecuteReader();
-                    ilkKWH = 0;
-                    while (oncekiGunReader.Read())
+                    haftalikTuketim.Clear();
+                    haftalikOrt = 0;
+                    ortalamaBolen = 0;
+                    haftalikBaslaStr = haftalikBaslangic.ToString("yyyy-MM-dd");
+                    haftalikBitisStr = haftalikBitis.ToString("yyyy-MM-dd");
+                    DateTime oncekiGunDT = haftalikBaslangic;
+
+                    for (int k = 0; k <= 6; k++)
                     {
-                        ilkKWH = Convert.ToDouble(oncekiGunReader["KWH"]);
-                        break;
-                    }
-                    oncekiGunReader.Close();
-                    string dinamikTarih = haftalikBaslangic.AddDays(k).ToString("yyyy-MM-dd");
-                    string dinamikString = "SELECT * From SAYAC_BILGISI WHERE ISIM = '" + sayacAdi + "' AND TARIH = '" + dinamikTarih + "' AND KWH <> 0 ORDER BY KWH ASC";
-                    SqlCommand dinamikCommand = new SqlCommand(dinamikString, con);
-                    SqlDataReader dinamikReader = dinamikCommand.ExecuteReader();
-                    while(dinamikReader.Read())
-                    {
-                        double KWH = Convert.ToDouble(dinamikReader["KWH"]); 
-                        double gunlukTuketim = Math.Round(((KWH - ilkKWH) * sayacCarpan), 3);
-                        if(gunlukTuketim >= sayacMinTuketim)
+                        string oncekiGun = oncekiGunDT.AddDays(-1).ToString("yyyy-MM-dd");
+                        string oncekiGunString = "SELECT * From SAYAC_BILGISI WHERE ISIM = '" + sayacAdi + "' AND TARIH = '" + oncekiGun + "' AND KWH <> 0 ORDER BY KWH ASC";
+                        SqlCommand oncekiGunCommand = new SqlCommand(oncekiGunString, con);
+                        SqlDataReader oncekiGunReader = oncekiGunCommand.ExecuteReader();
+                        ilkKWH = 0;
+                        while (oncekiGunReader.Read())
                         {
-                            haftalikOrt = haftalikOrt + gunlukTuketim;
-                            ortalamaBolen++;
-                            haftalikTuketim.Add(gunlukTuketim);
+                            ilkKWH = Convert.ToDouble(oncekiGunReader["KWH"]);
+                            break;
                         }
-                        KWH = 0;
-                        break;
+                        oncekiGunReader.Close();
+                        string dinamikTarih = haftalikBaslangic.AddDays(k).ToString("yyyy-MM-dd");
+                        string dinamikString = "SELECT * From SAYAC_BILGISI WHERE ISIM = '" + sayacAdi + "' AND TARIH = '" + dinamikTarih + "' AND KWH <> 0 ORDER BY KWH ASC";
+                        SqlCommand dinamikCommand = new SqlCommand(dinamikString, con);
+                        SqlDataReader dinamikReader = dinamikCommand.ExecuteReader();
+                        while (dinamikReader.Read())
+                        {
+                            double KWH = Convert.ToDouble(dinamikReader["KWH"]);
+                            double gunlukTuketim = Math.Round(((KWH - ilkKWH) * sayacCarpan), 3);
+                            if (ekstraSayac.IndexOf(sayacAdi) != -1)
+                            {
+                                if (ekstraSayac.IndexOf(sayacAdi) != -1)
+                                {
+                                    for (int j = 0; j < ekstraSayac.Count; j++)
+                                    {
+                                        if (ekstraSayac[j].ToString() == sayacAdi)
+                                        {
+                                            if (Convert.ToDateTime(ekstraBaslangic[j]) <= Convert.ToDateTime(dinamikTarih) && Convert.ToDateTime(ekstraBitis[j]) >= Convert.ToDateTime(dinamikTarih))
+                                            {
+                                                gunlukTuketim += Convert.ToDouble(ekstraKWH[j]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            if (gunlukTuketim >= sayacMinTuketim)
+                            {
+                                haftalikOrt = haftalikOrt + gunlukTuketim;
+                                ortalamaBolen++;
+                                haftalikTuketim.Add(gunlukTuketim);
+                            }
+                            KWH = 0;
+                            break;
+                        }
+                        dinamikReader.Close();
+                        oncekiGunDT = oncekiGunDT.AddDays(1);
                     }
-                    dinamikReader.Close();
-                    oncekiGunDT = oncekiGunDT.AddDays(1);
-                }
 
-                haftalikTuketim.Sort();
+                    haftalikTuketim.Sort();
 
-                DataRow haftalikRow = grafikTable.NewRow();
-                haftalikRow[0] = i;
-                haftalikRow[1] = haftalikBaslaStr;
-                haftalikRow[2] = haftalikBitisStr;
-                haftalikRow[3] = Math.Round(haftalikOrt / ortalamaBolen, 3);
-                haftalikRow[4] = haftalikTuketim[0];
-                haftalikRow[5] = haftalikTuketim[haftalikTuketim.Count - 1];
-                grafikTable.Rows.Add(haftalikRow);
+                    DataRow haftalikRow = grafikTable.NewRow();
+                    haftalikRow[0] = i;
+                    haftalikRow[1] = haftalikBaslaStr;
+                    haftalikRow[2] = haftalikBitisStr;
+                    haftalikRow[3] = Math.Round(haftalikOrt / ortalamaBolen, 3);
+                    try
+                    {
+                        haftalikRow[4] = haftalikTuketim[0];
+                        haftalikRow[5] = haftalikTuketim[haftalikTuketim.Count - 1];
+                    }
+                    catch (Exception ex)
+                    {
+                        haftalikRow[4] = 0;
+                        haftalikRow[5] = 0;
+                    }
+                    grafikTable.Rows.Add(haftalikRow);
 
-                if (haftalikBitis.AddDays(7) < endDate)
-                {
-                    haftalikBaslangic = haftalikBaslangic.AddDays(7);
-                    haftalikBitis = haftalikBitis.AddDays(7);
-                }
-                else
-                {
-                    haftalikBaslangic = haftalikBaslangic.AddDays(7);
-                    haftalikBitis = endDate;
+                    if (haftalikBitis.AddDays(7) < endDate)
+                    {
+                        haftalikBaslangic = haftalikBaslangic.AddDays(7);
+                        haftalikBitis = haftalikBitis.AddDays(7);
+                    }
+                    else
+                    {
+                        haftalikBaslangic = haftalikBaslangic.AddDays(7);
+                        haftalikBitis = endDate;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Veri bulunamadı.\n\n\n\n!"+ex);
+            }
+
+            progressBar.Value = 60;
         }
         void grafikOlustur()
         {
             genislik = 1;
             try
             {
+                chart1.Titles.Clear();
                 chart1.Titles.Add(sayacAdi);
 
                 chart1.Series.Clear();
@@ -263,11 +322,11 @@ namespace SayacRapor
                 chart1.Width = 400;
                 for (int i = 1; i <= grafikTable.Rows.Count; i++)
                 {
-                    double ortDeger = Convert.ToDouble(grafikTable.Rows[i-1][3]);
-                    double minDeger = Convert.ToDouble(grafikTable.Rows[i-1][4]);
-                    double maxDeger = Convert.ToDouble(grafikTable.Rows[i-1][5]);
+                    double ortDeger = Convert.ToDouble(grafikTable.Rows[i - 1][3]);
+                    double minDeger = Convert.ToDouble(grafikTable.Rows[i - 1][4]);
+                    double maxDeger = Convert.ToDouble(grafikTable.Rows[i - 1][5]);
                     DataPoint dp = new DataPoint();
-                    dp.AxisLabel = i + ". Hafta";
+                    dp.AxisLabel = i + ". Hafta\n" + grafikTable.Rows[i - 1][1] + " - " + grafikTable.Rows[i - 1][2];
                     dp.XValue = i - 1;
                     dp.YValues = new double[] { maxDeger };
                     if (maxGG)
@@ -311,6 +370,31 @@ namespace SayacRapor
             {
                 MessageBox.Show(ex.ToString());
             }
+
+            progressBar.Value = 100;
+            timer1.Start();
+        }
+
+        void aktifEkstraTuketimGetir()
+        {
+            ekstraBaslangic.Clear();
+            ekstraSayac.Clear();
+            ekstraKWH.Clear();
+            ekstraBitis.Clear();
+            string ekstraString = "SELECT * FROM SAYAC_EKSTRA";
+            SqlCommand ekstraCommand = new SqlCommand(ekstraString, con);
+            SqlDataReader ekstraReader = ekstraCommand.ExecuteReader();
+            while (ekstraReader.Read())
+            {
+                ekstraBaslangic.Add(ekstraReader["baslangic_tarihi"]);
+                if (ekstraReader["bitis_tarihi"].ToString() != "")
+                    ekstraBitis.Add(ekstraReader["bitis_tarihi"]);
+                else
+                    ekstraBitis.Add(DateTime.Now.ToString("yyyy-MM-dd"));
+                ekstraSayac.Add(ekstraReader["sayac_isim"]);
+                ekstraKWH.Add(ekstraReader["ekstra_tuketim"]);
+            }
+            ekstraReader.Close();
         }
     }
 }

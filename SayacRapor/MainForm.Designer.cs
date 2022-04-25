@@ -56,6 +56,7 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.sayaclarDataSet = new SayacRapor.SayaclarDataSet();
             this.sayaclarDataSetBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.progressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataViewSayac)).BeginInit();
@@ -85,7 +86,7 @@
             this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox2.Size = new System.Drawing.Size(1582, 80);
+            this.groupBox2.Size = new System.Drawing.Size(1561, 80);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             // 
@@ -130,7 +131,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listBox2.FormattingEnabled = true;
             this.listBox2.ItemHeight = 16;
-            this.listBox2.Location = new System.Drawing.Point(1321, 19);
+            this.listBox2.Location = new System.Drawing.Point(1300, 19);
             this.listBox2.Margin = new System.Windows.Forms.Padding(4);
             this.listBox2.Name = "listBox2";
             this.listBox2.Size = new System.Drawing.Size(254, 52);
@@ -198,7 +199,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1579, 470);
+            this.panel1.Size = new System.Drawing.Size(1558, 470);
             this.panel1.TabIndex = 12;
             // 
             // dataViewSayac
@@ -215,7 +216,7 @@
             this.dataViewSayac.Name = "dataViewSayac";
             this.dataViewSayac.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataViewSayac.RowTemplate.Height = 24;
-            this.dataViewSayac.Size = new System.Drawing.Size(1579, 470);
+            this.dataViewSayac.Size = new System.Drawing.Size(1558, 470);
             this.dataViewSayac.TabIndex = 7;
             this.dataViewSayac.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataViewSayac_CellBeginEdit);
             this.dataViewSayac.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataViewSayac_CellMouseClick);
@@ -229,7 +230,7 @@
             this.panel2.Location = new System.Drawing.Point(0, 508);
             this.panel2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1579, 470);
+            this.panel2.Size = new System.Drawing.Size(1558, 470);
             this.panel2.TabIndex = 13;
             // 
             // dataViewGunluk
@@ -245,7 +246,7 @@
             this.dataViewGunluk.Name = "dataViewGunluk";
             this.dataViewGunluk.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataViewGunluk.RowTemplate.Height = 24;
-            this.dataViewGunluk.Size = new System.Drawing.Size(1579, 470);
+            this.dataViewGunluk.Size = new System.Drawing.Size(1558, 470);
             this.dataViewGunluk.TabIndex = 8;
             this.dataViewGunluk.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataViewGunluk_CellMouseClick);
             this.dataViewGunluk.Scroll += new System.Windows.Forms.ScrollEventHandler(this.dataViewGunluk_Scroll);
@@ -260,7 +261,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1423, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1444, 28);
             this.menuStrip1.TabIndex = 14;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -282,7 +283,7 @@
             // ayarlarToolStripMenuItem
             // 
             this.ayarlarToolStripMenuItem.Name = "ayarlarToolStripMenuItem";
-            this.ayarlarToolStripMenuItem.Size = new System.Drawing.Size(116, 26);
+            this.ayarlarToolStripMenuItem.Size = new System.Drawing.Size(116, 24);
             this.ayarlarToolStripMenuItem.Text = "Sayaç Ayarları";
             this.ayarlarToolStripMenuItem.Click += new System.EventHandler(this.ayarlarToolStripMenuItem_Click);
             // 
@@ -292,7 +293,7 @@
             this.günlükGrafikToolStripMenuItem,
             this.haftalıkGrafikToolStripMenuItem});
             this.grafikMenüsüToolStripMenuItem.Name = "grafikMenüsüToolStripMenuItem";
-            this.grafikMenüsüToolStripMenuItem.Size = new System.Drawing.Size(117, 26);
+            this.grafikMenüsüToolStripMenuItem.Size = new System.Drawing.Size(117, 24);
             this.grafikMenüsüToolStripMenuItem.Text = "Grafik Menüsü";
             // 
             // günlükGrafikToolStripMenuItem
@@ -320,25 +321,27 @@
             this.panel3.Location = new System.Drawing.Point(16, 116);
             this.panel3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1581, 980);
+            this.panel3.Size = new System.Drawing.Size(1560, 980);
             this.panel3.TabIndex = 15;
+            this.panel3.Paint += new System.Windows.Forms.PaintEventHandler(this.panel3_Paint);
             // 
             // statusStrip1
             // 
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLabel});
+            this.statusLabel,
+            this.progressBar});
             this.statusStrip1.Location = new System.Drawing.Point(0, 1096);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 19, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1423, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1444, 23);
             this.statusStrip1.TabIndex = 16;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // statusLabel
             // 
             this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(0, 16);
+            this.statusLabel.Size = new System.Drawing.Size(0, 18);
             // 
             // timer1
             // 
@@ -355,6 +358,11 @@
             this.sayaclarDataSetBindingSource.DataSource = this.sayaclarDataSet;
             this.sayaclarDataSetBindingSource.Position = 0;
             // 
+            // progressBar
+            // 
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(100, 16);
+            // 
             // MainForm
             // 
             this.AcceptButton = this.btn_VeriGetir;
@@ -362,7 +370,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(1444, 875);
+            this.ClientSize = new System.Drawing.Size(1465, 875);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.groupBox2);
@@ -419,6 +427,7 @@
         private System.Windows.Forms.ToolStripMenuItem günlükGrafikToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem haftalıkGrafikToolStripMenuItem;
         private System.Windows.Forms.ListBox listBox3;
+        private System.Windows.Forms.ToolStripProgressBar progressBar;
     }
 }
 

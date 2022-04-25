@@ -19,6 +19,10 @@ namespace SayacRapor
         }
         Stopwatch st = new Stopwatch();
         string dinamikTarih;
+        ArrayList ekstraBaslangic = new ArrayList();
+        ArrayList ekstraBitis = new ArrayList();
+        ArrayList ekstraSayac = new ArrayList();
+        ArrayList ekstraKWH = new ArrayList();
         ArrayList minimumTuketim = new ArrayList();
         ArrayList ortalamaBolen = new ArrayList();
         ArrayList gunlukToplam = new ArrayList();
@@ -54,12 +58,14 @@ namespace SayacRapor
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            progressBar.Visible = true;
+            progressBar.Minimum = 0;
+            progressBar.Maximum = 100;
+            progressBar.Value = 0;
             groupBox2.Width = Screen.PrimaryScreen.Bounds.Width - 50;
             panel3.Width = Screen.PrimaryScreen.Bounds.Width - 50;
             listBox3.Location = new Point(listBox2.Location.X - listBox3.Width - 5, listBox2.Location.Y);
             listBox1.Location = new Point(listBox3.Location.X - listBox1.Width - 5 ,listBox2.Location.Y);
-
-            System.Threading.Thread.Sleep(100);
             settingsYukle();
             conString = "Data Source=" + serverIP + ";Initial Catalog=" + tabloAdi + ";User ID=" + userID + ";Password=" + password;
             con = new SqlConnection(conString);
@@ -87,6 +93,7 @@ namespace SayacRapor
             tabloAdi = Settings.Default.tabloAdi;
             userID = Settings.Default.userID;
             password = Settings.Default.password;
+            progressBar.Value = 10;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -108,6 +115,7 @@ namespace SayacRapor
             renklendirRow.Clear();
             listBox1.Items.Clear();
             listBox2.Items.Clear();
+            listBox3.Items.Clear();
             dataGridTemizle();
             st.Reset();
             st.Restart();
@@ -117,23 +125,19 @@ namespace SayacRapor
             {
                 con.Open();
             }
-            string tarihString = "SELECT DISTINCT TARIH From SAYAC_BILGISI WHERE TARIH >= '" + sDate + "' AND TARIH <= '" + eDate + "' AND KWH <> 0 ORDER BY TARIH";
+            aktifEkstraTuketimGetir();
             sayacTable.Columns.Add("TARIH");
             gunlukTable.Columns.Add("TARIH");
 
             //Tarih aralığı tabloya eklendi.
-            SqlCommand tarihCommand = new SqlCommand(tarihString, con);
-            SqlDataReader tarihReader = tarihCommand.ExecuteReader();
-            while (tarihReader.Read())
+            DateTime gun = startZaman;
+            for (int i = 0; i<sayi; i++)
             {
-                colDate.Add(tarihReader["TARIH"].ToString());
-                DataRow tarihSayacRow = sayacTable.NewRow();
-                DataRow tarihGunlukRow = gunlukTable.NewRow();
-                tarihSayacRow["TARIH"] = tarihReader["TARIH"].ToString();
-                tarihGunlukRow["TARIH"] = tarihReader["TARIH"].ToString();
+                string tmpTarih = gun.AddDays(i).ToString("yyyy-MM-dd");
+                colDate.Add(tmpTarih);
                 rowSayi++;
             }
-            tarihReader.Close();
+            progressBar.Value = 30;
 
             //Sayaç isimleri tabloya eklendi.
             string sayacString = "Select * From SAYAC_AYAR ORDER BY sayac_sira";
@@ -163,7 +167,7 @@ namespace SayacRapor
 
 
 
-
+            progressBar.Value = 50;
             st.Stop();
             listBox1.Items.Add("For Öncesi: " + st.ElapsedMilliseconds);
             st.Restart();
@@ -179,15 +183,18 @@ namespace SayacRapor
                 listIlkKWH.Clear();
                 while (oncekiGunReader.Read())
                 {
-                    listIlkIsım.Add(oncekiGunReader["ISIM"]);
-                    listIlkKWH.Add(oncekiGunReader["KWH"]);
+                    if(listIlkIsım.IndexOf(oncekiGunReader["ISIM"]) == -1)
+                    {
+                        listIlkIsım.Add(oncekiGunReader["ISIM"]);
+                        listIlkKWH.Add(oncekiGunReader["KWH"]);
+                    }
                 }
                 oncekiGunReader.Close();
 
                 DataRow sayacRow = sayacTable.NewRow();
                 DataRow gunlukRow = gunlukTable.NewRow();
                 dinamikTarih = colDate[i].ToString();
-                string dinamikString = "SELECT * From SAYAC_BILGISI WHERE TARIH = '" + dinamikTarih + "' AND KWH <> 0";
+                string dinamikString = "SELECT * From SAYAC_BILGISI WHERE TARIH = '" + dinamikTarih + "' AND KWH <> 0 ORDER BY KWH DESC";
                 SqlCommand dinamikCommand = new SqlCommand(dinamikString, con);
                 SqlDataReader dinamikReader = dinamikCommand.ExecuteReader();
                 sayacRow["TARIH"] = dinamikTarih;
@@ -225,6 +232,19 @@ namespace SayacRapor
                     {
                         double gunlukTuketim = Math.Round(((KWH - oncekiKWH)*carpan), 3);
                         sayacRow[indexName] = KWH;
+                        if (ekstraSayac.IndexOf(indexName) != -1)
+                        {
+                            for (int j = 0; j < ekstraSayac.Count; j++)
+                            {
+                                if(ekstraSayac[j].ToString() == indexName)
+                                {
+                                    if(Convert.ToDateTime(ekstraBaslangic[j]) <= Convert.ToDateTime(indexTarih) && Convert.ToDateTime(ekstraBitis[j]) >= Convert.ToDateTime(indexTarih))
+                                    {
+                                        gunlukTuketim += Convert.ToDouble(ekstraKWH[j]);
+                                    }
+                                }
+                            }
+                        }
                         gunlukRow[indexName] = gunlukTuketim;
                         if(gunlukTuketim < 0)
                         {
@@ -246,6 +266,7 @@ namespace SayacRapor
                 dinamikReader.Close();
                 ilkGunDateTime = ilkGunDateTime.AddDays(1);
             }
+            progressBar.Value = 80;
             st.Stop();
             listBox1.Items.Add("For : " + st.ElapsedMilliseconds);
             st.Restart();
@@ -317,6 +338,7 @@ namespace SayacRapor
             renk.BackColor = Color.YellowGreen;
             dataViewGunluk.Rows[ortIndex].DefaultCellStyle = renk;
             dataViewGunluk.Rows[topIndex].DefaultCellStyle = renk;
+            progressBar.Value = 90;
             panelBoyut();
         }
 
@@ -366,6 +388,7 @@ namespace SayacRapor
                 if (date.DayOfWeek == DayOfWeek.Monday)
                     haftaSayisi++;
             }
+            progressBar.Value = 20;
         }
 
         private void datePickerStart_ValueChanged(object sender, EventArgs e)
@@ -508,6 +531,7 @@ namespace SayacRapor
         {
             timer1.Interval = 10000;
             statusLabel.Text = "";
+            progressBar.Visible = false;
         }
 
         private void btnOtomatikDoldur_Click(object sender, EventArgs e)
@@ -606,6 +630,11 @@ namespace SayacRapor
             int row = dataViewSayac.CurrentCell.RowIndex;
             int cell = dataViewSayac.CurrentCell.ColumnIndex;
             dataViewGunluk.CurrentCell = dataViewGunluk.Rows[row+1].Cells[cell];
+        }
+
+        private void panel3_Paint(object sender, PaintEventArgs e)
+        {
+
         }
 
         private void dataViewGunluk_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -776,6 +805,30 @@ namespace SayacRapor
         {
             panel2.Location = new Point(panel1.Location.X, panel1.Location.Y + panel1.Height + 100);
             panel3.Height = panel1.Height + panel2.Height + 10;
+            progressBar.Value = 100;
+            timer1.Start();
+        }
+
+        void aktifEkstraTuketimGetir()
+        {
+            ekstraBaslangic.Clear();
+            ekstraSayac.Clear();
+            ekstraKWH.Clear();
+            ekstraBitis.Clear();
+            string ekstraString = "SELECT * FROM SAYAC_EKSTRA";
+            SqlCommand ekstraCommand = new SqlCommand(ekstraString, con);
+            SqlDataReader ekstraReader = ekstraCommand.ExecuteReader();
+            while(ekstraReader.Read())
+            {
+                ekstraBaslangic.Add(ekstraReader["baslangic_tarihi"]);
+                if (ekstraReader["bitis_tarihi"].ToString() != "")
+                    ekstraBitis.Add(ekstraReader["bitis_tarihi"]);
+                else
+                    ekstraBitis.Add(DateTime.Now.ToString("yyyy-MM-dd"));
+                ekstraSayac.Add(ekstraReader["sayac_isim"]);
+                ekstraKWH.Add(ekstraReader["ekstra_tuketim"]);
+            }
+            ekstraReader.Close();
         }
     }
 }

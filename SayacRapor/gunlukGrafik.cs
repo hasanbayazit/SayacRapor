@@ -61,6 +61,8 @@ namespace SayacRapor
 
         private void gunlukGrafik_Load(object sender, EventArgs e)
         {
+            gunlukSayacGrafikVerileri.Clear();
+            gunlukSayacGrafikVerileri.Columns.Clear();
             gunlukSayacGrafikVerileri = gelenTablo.Copy();
             if (gunlukSayacGrafikVerileri.Rows.Count > 0)
             {
@@ -229,9 +231,9 @@ namespace SayacRapor
                 chart1.Series.Add("Motor Ortalama");
                 chart1.Series.Add("Fan Ortalama");
                 toplamOrt = 0; isiticiOrt = 0; motorOrt = 0; fanOrt = 0;
+                double toplamDeger = 0, isiticiDeger = 0, motorDeger = 0, fanDeger = 0;
                 for (int i = 0; i < gunlukSayacGrafikVerileri.Rows.Count - 1; i++)
                 {
-                    double isiticiDeger = 0, motorDeger = 0, fanDeger = 0;
                     string tarih = gunlukSayacGrafikVerileri.Rows[i][0].ToString();
                     if (indexIsitici != -1)
                     {
@@ -299,7 +301,8 @@ namespace SayacRapor
                     toplamOrt = isiticiOrt + motorOrt + fanOrt;
                     if (checkToplam.Checked)
                     {
-                        double toplamDeger = isiticiDeger + motorDeger + fanDeger;
+
+                        toplamDeger = isiticiDeger + motorDeger + fanDeger;
                         DataPoint dp4 = new DataPoint();
                         dp4.AxisLabel = tarih.ToString();
                         dp4.LabelAngle = 45;
@@ -310,7 +313,6 @@ namespace SayacRapor
                         else
                             dp4.Label = "";
                         chart1.Series["Toplam"].Points.Add(dp4);
-                       
                     }
                     genislik += 1;
                     chart1.ChartAreas["areaSayac"].AxisX.IsLabelAutoFit = true;
@@ -321,6 +323,10 @@ namespace SayacRapor
                     checkIsiticiOrt.Text = isitici + " Ortalama: " + isiticiOrt;
                     checkMotorOrt.Text = motor + " Ortalama: " + motorOrt;
                     checkFanOrt.Text = fan + " Ortalama: " + fanOrt;
+                    toplamDeger = 0;
+                    fanDeger = 0;
+                    motorDeger = 0;
+                    isiticiDeger = 0;
                 }
                 for (int i = 0; i < gunlukSayacGrafikVerileri.Rows.Count - 1; i++)
                 {
