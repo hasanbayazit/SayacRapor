@@ -320,17 +320,17 @@ namespace SayacRapor
             enduktif = Math.Round(toplam580 / toplam180 * 100,3);
             kapasitif = Math.Round(toplam880 / toplam180 * 100,3);
             if (enduktif > 20)
-                lbl580180.ForeColor = Color.Red;
+                lblEnduktif.ForeColor = Color.Red;
             else
-                lbl580180.ForeColor = Color.Green;
+                lblEnduktif.ForeColor = Color.Green;
 
-            if(kapasitif > 20)
-                lbl880180.ForeColor = Color.Red;
+            if(kapasitif > 15)
+                lblKapasitif.ForeColor = Color.Red;
             else
-                lbl880180.ForeColor = Color.Green;
+                lblKapasitif.ForeColor = Color.Green;
 
-            lbl580180.Text = "580/180 = " + enduktif;
-            lbl880180.Text = "880/180 = " + kapasitif;
+            lblEnduktif.Text = "580/180 = " + enduktif;
+            lblKapasitif.Text = "880/180 = " + kapasitif;
             renk2.BackColor = Color.Aquamarine;
             dataViewGunluk.Columns[0].DefaultCellStyle = renk2;
             dataViewSayac.Columns[0].DefaultCellStyle = renk2;

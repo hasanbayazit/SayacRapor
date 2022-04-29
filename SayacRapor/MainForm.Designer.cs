@@ -30,8 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.lbl880180 = new System.Windows.Forms.Label();
-            this.lbl580180 = new System.Windows.Forms.Label();
+            this.lblKapasitif = new System.Windows.Forms.Label();
+            this.lblEnduktif = new System.Windows.Forms.Label();
             this.btnVerileriYapistir = new System.Windows.Forms.Button();
             this.btnOtomatikDoldur = new System.Windows.Forms.Button();
             this.btnExcel = new System.Windows.Forms.Button();
@@ -77,8 +77,8 @@
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.lbl880180);
-            this.groupBox2.Controls.Add(this.lbl580180);
+            this.groupBox2.Controls.Add(this.lblKapasitif);
+            this.groupBox2.Controls.Add(this.lblEnduktif);
             this.groupBox2.Controls.Add(this.btnVerileriYapistir);
             this.groupBox2.Controls.Add(this.btnOtomatikDoldur);
             this.groupBox2.Controls.Add(this.btnExcel);
@@ -92,33 +92,33 @@
             this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox2.Size = new System.Drawing.Size(1790, 80);
+            this.groupBox2.Size = new System.Drawing.Size(1769, 80);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             // 
-            // lbl880180
+            // lblKapasitif
             // 
-            this.lbl880180.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.lbl880180.AutoSize = true;
-            this.lbl880180.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl880180.ForeColor = System.Drawing.Color.Black;
-            this.lbl880180.Location = new System.Drawing.Point(1597, 44);
-            this.lbl880180.Name = "lbl880180";
-            this.lbl880180.Size = new System.Drawing.Size(56, 25);
-            this.lbl880180.TabIndex = 17;
-            this.lbl880180.Text = "0000";
+            this.lblKapasitif.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.lblKapasitif.AutoSize = true;
+            this.lblKapasitif.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblKapasitif.ForeColor = System.Drawing.Color.Black;
+            this.lblKapasitif.Location = new System.Drawing.Point(1576, 44);
+            this.lblKapasitif.Name = "lblKapasitif";
+            this.lblKapasitif.Size = new System.Drawing.Size(56, 25);
+            this.lblKapasitif.TabIndex = 17;
+            this.lblKapasitif.Text = "0000";
             // 
-            // lbl580180
+            // lblEnduktif
             // 
-            this.lbl580180.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.lbl580180.AutoSize = true;
-            this.lbl580180.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl580180.ForeColor = System.Drawing.Color.Black;
-            this.lbl580180.Location = new System.Drawing.Point(1597, 16);
-            this.lbl580180.Name = "lbl580180";
-            this.lbl580180.Size = new System.Drawing.Size(56, 25);
-            this.lbl580180.TabIndex = 16;
-            this.lbl580180.Text = "0000";
+            this.lblEnduktif.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.lblEnduktif.AutoSize = true;
+            this.lblEnduktif.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblEnduktif.ForeColor = System.Drawing.Color.Black;
+            this.lblEnduktif.Location = new System.Drawing.Point(1576, 16);
+            this.lblEnduktif.Name = "lblEnduktif";
+            this.lblEnduktif.Size = new System.Drawing.Size(56, 25);
+            this.lblEnduktif.TabIndex = 16;
+            this.lblEnduktif.Text = "0000";
             // 
             // btnVerileriYapistir
             // 
@@ -236,7 +236,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1787, 470);
+            this.panel1.Size = new System.Drawing.Size(1766, 470);
             this.panel1.TabIndex = 12;
             // 
             // dataViewSayac
@@ -253,7 +253,7 @@
             this.dataViewSayac.Name = "dataViewSayac";
             this.dataViewSayac.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataViewSayac.RowTemplate.Height = 24;
-            this.dataViewSayac.Size = new System.Drawing.Size(1787, 470);
+            this.dataViewSayac.Size = new System.Drawing.Size(1766, 470);
             this.dataViewSayac.TabIndex = 7;
             this.dataViewSayac.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataViewSayac_CellBeginEdit);
             this.dataViewSayac.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataViewSayac_CellMouseClick);
@@ -267,7 +267,7 @@
             this.panel2.Location = new System.Drawing.Point(0, 508);
             this.panel2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1787, 470);
+            this.panel2.Size = new System.Drawing.Size(1766, 470);
             this.panel2.TabIndex = 13;
             // 
             // dataViewGunluk
@@ -284,7 +284,7 @@
             this.dataViewGunluk.Name = "dataViewGunluk";
             this.dataViewGunluk.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataViewGunluk.RowTemplate.Height = 24;
-            this.dataViewGunluk.Size = new System.Drawing.Size(1787, 470);
+            this.dataViewGunluk.Size = new System.Drawing.Size(1766, 470);
             this.dataViewGunluk.TabIndex = 8;
             this.dataViewGunluk.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataViewGunluk_CellMouseClick);
             this.dataViewGunluk.Scroll += new System.Windows.Forms.ScrollEventHandler(this.dataViewGunluk_Scroll);
@@ -359,7 +359,7 @@
             this.panel3.Location = new System.Drawing.Point(16, 116);
             this.panel3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1789, 980);
+            this.panel3.Size = new System.Drawing.Size(1768, 980);
             this.panel3.TabIndex = 15;
             this.panel3.Paint += new System.Windows.Forms.PaintEventHandler(this.panel3_Paint);
             // 
@@ -476,8 +476,8 @@
         private System.Windows.Forms.Label lblHatali;
         private System.Windows.Forms.Label lblEksik;
         private System.Windows.Forms.Timer timer2;
-        private System.Windows.Forms.Label lbl880180;
-        private System.Windows.Forms.Label lbl580180;
+        private System.Windows.Forms.Label lblKapasitif;
+        private System.Windows.Forms.Label lblEnduktif;
         private System.Windows.Forms.Timer timer3;
     }
 }
