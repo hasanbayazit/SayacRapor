@@ -46,6 +46,7 @@ namespace SayacRapor
         int haftaSayisi, sayi, rowSayi = 0;
         public bool sifreDogru = false, insertMode = true, veriYapistir = false;
         public bool adminMode = false;
+        bool gecenAySonGunEklendi = false;
         DateTime ilkGunDateTime, startZaman, endZaman;
         TimeSpan zaman;
         public static string conString;
@@ -152,7 +153,7 @@ namespace SayacRapor
             //KWH verileri tabloya eklendi.
             for (int i = 0; i < colDate.Count; i++)
             {
-                oncekiGun = ilkGunDateTime.AddDays(-1).ToString("yyyy-MM-dd");
+                oncekiGun = ilkGunDateTime.ToString("yyyy-MM-dd");
                 string oncekiGunString = "SELECT * From SAYAC_BILGISI WHERE TARIH = '" + oncekiGun + "' AND KWH <> 0 ORDER BY KWH ASC";
                 SqlCommand oncekiGunCommand = new SqlCommand(oncekiGunString, con);
                 SqlDataReader oncekiGunReader = oncekiGunCommand.ExecuteReader();
@@ -171,7 +172,16 @@ namespace SayacRapor
                 DataRow sayacRow = sayacTable.NewRow();
                 DataRow gunlukRow = gunlukTable.NewRow();
                 dinamikTarih = colDate[i].ToString();
-                string dinamikString = "SELECT * From SAYAC_BILGISI WHERE TARIH = '" + dinamikTarih + "' AND KWH <> 0 ORDER BY KWH DESC";
+                string sorguTarihi = "";
+                try
+                {
+                    sorguTarihi = colDate[i + 1].ToString();
+                }
+                catch
+                {
+                    sorguTarihi = colDate[i].ToString();
+                }
+                string dinamikString = "SELECT * From SAYAC_BILGISI WHERE TARIH = '" + sorguTarihi + "' AND KWH <> 0 ORDER BY KWH DESC";
                 SqlCommand dinamikCommand = new SqlCommand(dinamikString, con);
                 SqlDataReader dinamikReader = dinamikCommand.ExecuteReader();
                 sayacRow["TARIH"] = dinamikTarih;
@@ -207,7 +217,7 @@ namespace SayacRapor
 
                     if (nameIndex != -1)
                     {
-                        double gunlukTuketim = Math.Round(((KWH - oncekiKWH)*carpan), 3);
+                        double gunlukTuketim = Math.Round(((KWH - oncekiKWH) * carpan), 3);
                         sayacRow[indexName] = KWH;
                         if (ekstraSayac.IndexOf(indexName) != -1)
                         {
