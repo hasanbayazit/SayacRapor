@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using System.Collections;
 
 namespace SayacRapor
 {
@@ -22,6 +23,8 @@ namespace SayacRapor
         int sayacSira, sayacMin, sayacExtra, sayacCarpan, id;
         bool sayacMotorMu;
         SqlConnection con = new SqlConnection(MainForm.conString);
+        public ArrayList hataliVeriler = new ArrayList();
+        public ArrayList eksikKolonlar = new ArrayList();
         private void dataViewSettings_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             string updateString = "";
@@ -59,6 +62,24 @@ namespace SayacRapor
             veriGetir();
             ekstraTuketimGetir();
             sayacIsimGetir();
+            listEksikEkle();
+            listHataliEkle();
+        }
+
+        private void listHataliEkle()
+        {
+            for (int i = 0; i < hataliVeriler.Count; i++)
+            {
+                listHatali.Items.Add(hataliVeriler[i]);
+            }
+        }
+
+        private void listEksikEkle()
+        {
+            for (int i = 0; i < eksikKolonlar.Count; i++)
+            {
+                listEksik.Items.Add(eksikKolonlar[i]);
+            }
         }
 
         private void btnSayacSil_Click(object sender, EventArgs e)
@@ -104,6 +125,8 @@ namespace SayacRapor
                 con.Close();
             }
             veriGetir();
+            dataViewSettings.FirstDisplayedScrollingRowIndex = dataViewSettings.RowCount - 1;
+            dataViewSettings[1, dataViewSettings.RowCount - 1].Selected = true;
         }
 
         private void buttonEkstraBitir_Click(object sender, EventArgs e)

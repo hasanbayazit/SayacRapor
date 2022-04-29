@@ -25,15 +25,6 @@ namespace SayacRapor {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("50")]
-        public string carpan {
-            get {
-                return ((string)(this["carpan"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("192.168.2.123")]
         public string serverIP {
             get {
@@ -61,7 +52,7 @@ namespace SayacRapor {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("SayaclarTest")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Sayaclar")]
         public string tabloAdi {
             get {
                 return ((string)(this["tabloAdi"]));

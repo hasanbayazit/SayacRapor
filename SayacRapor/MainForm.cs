@@ -8,6 +8,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
 using ClosedXML.Excel;
+using Microsoft.VisualBasic;
+using System.Collections.Generic;
 
 namespace SayacRapor
 {
@@ -18,7 +20,6 @@ namespace SayacRapor
             InitializeComponent();
         }
         Stopwatch st = new Stopwatch();
-        string dinamikTarih;
         ArrayList ekstraBaslangic = new ArrayList();
         ArrayList ekstraBitis = new ArrayList();
         ArrayList ekstraSayac = new ArrayList();
@@ -36,23 +37,17 @@ namespace SayacRapor
         ArrayList multipleCell = new ArrayList();
         ArrayList multipleCol = new ArrayList();
         ArrayList listIlkKWH = new ArrayList();
+        ArrayList hataliVeriler = new ArrayList();
+        ArrayList eksikKolonlar = new ArrayList();
         DataTable sayacTable = new DataTable();
         DataTable gunlukTable = new DataTable();
-        double oncekiKWH = 0;
-        string oncekiGun;
-        string ilkGunString;
-        string startDate, endDate;
-        int haftaSayisi, sayi;
-        int rowSayi = 0;
-
-        Boolean adminMode = false;
-        string sayacIsim, tarih;
-        double eskiKWH, yeniKWH;
-        Boolean insertMode = true;
+        double oncekiKWH = 0, eskiKWH, yeniKWH;
+        string startDate, endDate, ilkGunString, oncekiGun, sayacIsim, tarih, dinamikTarih;
+        int haftaSayisi, sayi, rowSayi = 0;
+        public bool sifreDogru = false, insertMode = true, veriYapistir = false;
+        public bool adminMode = false;
         DateTime ilkGunDateTime, startZaman, endZaman;
         TimeSpan zaman;
-        /*public static string conString = "Data Source=DESKTOP-VJMT9PK\\SQLEXPRESS;Initial Catalog=SayaclarTest;User ID=sa;Password=a123456*";*/
-        string serverIP, tabloAdi, userID, password;
         public static string conString;
         SqlConnection con;
 
@@ -64,10 +59,7 @@ namespace SayacRapor
             progressBar.Value = 0;
             groupBox2.Width = Screen.PrimaryScreen.Bounds.Width - 50;
             panel3.Width = Screen.PrimaryScreen.Bounds.Width - 50;
-            listBox3.Location = new Point(listBox2.Location.X - listBox3.Width - 5, listBox2.Location.Y);
-            listBox1.Location = new Point(listBox3.Location.X - listBox1.Width - 5 ,listBox2.Location.Y);
-            settingsYukle();
-            conString = "Data Source=" + serverIP + ";Initial Catalog=" + tabloAdi + ";User ID=" + userID + ";Password=" + password;
+            conString = "Data Source=192.168.2.123;Initial Catalog=Sayaclar;User ID=sa;Password=a123456*";
             con = new SqlConnection(conString);
             try
             {
@@ -87,15 +79,6 @@ namespace SayacRapor
             }
         }
 
-        private void settingsYukle()
-        {
-            serverIP = Settings.Default.serverIP;
-            tabloAdi = Settings.Default.tabloAdi;
-            userID = Settings.Default.userID;
-            password = Settings.Default.password;
-            progressBar.Value = 10;
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             startDate = datePickerStart.Value.ToString("yyyy-MM-dd");
@@ -113,13 +96,11 @@ namespace SayacRapor
             gunlukOrtalama.Clear();
             renklendirCol.Clear();
             renklendirRow.Clear();
-            listBox1.Items.Clear();
-            listBox2.Items.Clear();
-            listBox3.Items.Clear();
+            eksikKolonlar.Clear();
+            hataliVeriler.Clear();
             dataGridTemizle();
             st.Reset();
             st.Restart();
-            //dataGridTemizle();
             //Bağlantı açık değilse bağlantıyı açıyoruz.
             if (con.State != ConnectionState.Open)
             {
@@ -162,15 +143,11 @@ namespace SayacRapor
                 carpanRow[indexName] = sayacReader["sayac_carpan"];
             }
             gunlukTable.Rows.Add(carpanRow);
-
             sayacReader.Close();
 
 
 
             progressBar.Value = 50;
-            st.Stop();
-            listBox1.Items.Add("For Öncesi: " + st.ElapsedMilliseconds);
-            st.Restart();
 
             //KWH verileri tabloya eklendi.
             for (int i = 0; i < colDate.Count; i++)
@@ -223,8 +200,8 @@ namespace SayacRapor
                         {
                             renklendirCol.Add(nameIndex);
                             renklendirRow.Add(tarihIndex);
-                            if(listBox3.Items.IndexOf(indexName) == -1)
-                                listBox3.Items.Add(indexName);
+                            if(hataliVeriler.IndexOf(indexName) == -1)
+                                hataliVeriler.Add(indexName);
                         }
                     }
 
@@ -250,14 +227,14 @@ namespace SayacRapor
                         {
                             renklendirCol.Add(nameIndex);
                             renklendirRow.Add(tarihIndex);
-                            if (listBox3.Items.IndexOf(indexName) == -1)
-                                listBox3.Items.Add(indexName);
+                            if (hataliVeriler.IndexOf(indexName) == -1)
+                                hataliVeriler.Add(indexName);
                         }
                     }
                     else
                     {
-                        if (listBox2.Items.IndexOf(indexName) == -1)
-                            listBox2.Items.Add(indexName);
+                        if (eksikKolonlar.IndexOf(indexName) == -1)
+                            eksikKolonlar.Add(indexName);
                     }
                     KWH = 0;
                 }
@@ -267,9 +244,6 @@ namespace SayacRapor
                 ilkGunDateTime = ilkGunDateTime.AddDays(1);
             }
             progressBar.Value = 80;
-            st.Stop();
-            listBox1.Items.Add("For : " + st.ElapsedMilliseconds);
-            st.Restart();
 
             for(int i = 1; i<gunlukTable.Columns.Count; i++)
             {
@@ -306,31 +280,31 @@ namespace SayacRapor
                 gunlukTop[k+1] = Math.Round(Convert.ToDouble(gunlukToplam[k]),3);
             }
             gunlukTable.Rows.Add(gunlukTop);
-            sayacTable.Rows.Add();
-            sayacTable.Rows.Add();
+            //sayacTable.Rows.Add();
+            //sayacTable.Rows.Add();
             dataViewSayac.DataSource = sayacTable;
             dataViewGunluk.DataSource = gunlukTable;
             if (con.State != ConnectionState.Closed)
             {
                 con.Close();
             }
-            st.Stop();
-            listBox1.Items.Add("For Sonrası : " + st.ElapsedMilliseconds);
             FreezeBand(dataViewGunluk.Rows[0]);
-            for(int i = 0; i<renklendirRow.Count;i++)
+            dataViewGunluk.Columns["TARIH"].Frozen = true;
+            dataViewSayac.Columns["TARIH"].Frozen = true;
+
+            for (int i = 0; i<renklendirRow.Count;i++)
             {
                 int row = Convert.ToInt16(renklendirRow[i]);
                 int col = Convert.ToInt16(renklendirCol[i]);
                 dataViewGunluk[col, row].Style.BackColor = Color.Red;
             }
             DataGridViewCellStyle renk = new DataGridViewCellStyle();
+            DataGridViewCellStyle renk2 = new DataGridViewCellStyle();
 
             for (int i = 0; i < dataViewSayac.Columns.Count; i++)
             {
                 dataViewSayac.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
                 dataViewGunluk.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-                int w = dataViewSayac.Columns[i].Width;
-                dataViewGunluk.Columns[i].Width = w;
             }
 
             int ortIndex = dataViewGunluk.Rows[rowSayi+1].Cells["TARIH"].RowIndex;
@@ -338,8 +312,46 @@ namespace SayacRapor
             renk.BackColor = Color.YellowGreen;
             dataViewGunluk.Rows[ortIndex].DefaultCellStyle = renk;
             dataViewGunluk.Rows[topIndex].DefaultCellStyle = renk;
+            double toplam180 = 0, toplam580 = 0, toplam880 = 0;
+            toplam180 = Convert.ToDouble(dataViewGunluk.Rows[topIndex].Cells["180"].Value);
+            toplam580 = Convert.ToDouble(dataViewGunluk.Rows[topIndex].Cells["580"].Value);
+            toplam880 = Convert.ToDouble(dataViewGunluk.Rows[topIndex].Cells["880"].Value);
+            double enduktif = 0, kapasitif = 0;
+            enduktif = Math.Round(toplam580 / toplam180 * 100,3);
+            kapasitif = Math.Round(toplam880 / toplam180 * 100,3);
+            if (enduktif > 20)
+                lbl580180.ForeColor = Color.Red;
+            else
+                lbl580180.ForeColor = Color.Green;
+
+            if(kapasitif > 20)
+                lbl880180.ForeColor = Color.Red;
+            else
+                lbl880180.ForeColor = Color.Green;
+
+            lbl580180.Text = "580/180 = " + enduktif;
+            lbl880180.Text = "880/180 = " + kapasitif;
+            renk2.BackColor = Color.Aquamarine;
+            dataViewGunluk.Columns[0].DefaultCellStyle = renk2;
+            dataViewSayac.Columns[0].DefaultCellStyle = renk2;
+            dataViewGunluk.ColumnHeadersDefaultCellStyle = renk2;
+            dataViewSayac.ColumnHeadersDefaultCellStyle = renk2;
+            dataViewGunluk.EnableHeadersVisualStyles = false;
+            dataViewSayac.EnableHeadersVisualStyles = false;
             progressBar.Value = 90;
             panelBoyut();
+            if (hataliVeriler.Count > 1)
+            {
+                lblHatali.Visible = true;
+                timer2.Start();
+            }
+            if (eksikKolonlar.Count > 1)
+            {
+                lblEksik.Visible = true;
+                timer2.Start();
+            }
+            timer3.Start();
+            timer3.Enabled = true;
         }
 
         void dataGridTemizle()
@@ -357,7 +369,6 @@ namespace SayacRapor
             multipleCell.Clear();
             multipleCol.Clear();
             listIlkKWH.Clear();
-            listBox1.Items.Clear();
             dataViewSayac.DataSource = null;
             dataViewGunluk.DataSource = null;
             colNames.Clear();
@@ -500,30 +511,80 @@ namespace SayacRapor
 
         }
 
+        private void çokluVeriEklemeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Font defaultFont = SystemFonts.DefaultFont;
+            if (veriYapistir)
+            {
+                veriYapistir = false;
+                statusLabel.ForeColor = Color.Green;
+                dataViewSayac.EditMode = DataGridViewEditMode.EditProgrammatically;
+                statusLabel.Font = new Font(defaultFont.FontFamily, defaultFont.Size);
+                statusLabel.Text = "Çoklu yapıştırma kapalı.";
+                timer1.Start();
+            }
+            else
+            {
+                passwordForm pwf = new passwordForm();
+                pwf.ShowDialog();
+                sifreDogru = pwf.sifreDogru;
+                if (sifreDogru)
+                {
+                    veriYapistir = true;
+                    statusLabel.ForeColor = Color.Red;
+                    dataViewSayac.EditMode = DataGridViewEditMode.EditProgrammatically;
+                    statusLabel.Font = new Font(defaultFont.FontFamily, defaultFont.Size, FontStyle.Bold);
+                    statusLabel.Text = "Çoklu yapıştırma açık.";
+                    btnVerileriYapistir.Visible = true;
+                    sifreDogru = false;
+                }
+            }
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            veriYapistir = true;
+            PasteClipboard();
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            lblHatali.Visible = false;
+            lblEksik.Visible = false;
+        }
+
         private void açıkKapatToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Font defaultFont = SystemFonts.DefaultFont;
             if (adminMode)
             {
                 adminMode = false;
-                açıkKapatToolStripMenuItem.Text = "(Kapalı) - Aç";
                 dataViewSayac.EditMode = DataGridViewEditMode.EditProgrammatically;
                 statusLabel.ForeColor = Color.Green;
                 statusLabel.Font = new Font(defaultFont.FontFamily, defaultFont.Size);
                 statusLabel.Text = "Edit mod kapalı.";
                 btnOtomatikDoldur.Visible = false;
+                btnVerileriYapistir.Visible = false;
                 timer1.Start();
             }
-            else if(!adminMode)
+            else
             {
-                adminMode = true;
-                açıkKapatToolStripMenuItem.Text = "(Açık) - Kapat";
-                dataViewSayac.EditMode = DataGridViewEditMode.EditOnF2;
-                statusLabel.ForeColor = Color.Red;
-                statusLabel.Font = new Font(defaultFont.FontFamily, defaultFont.Size, FontStyle.Bold);
-                statusLabel.Text = "Edit mod açık.";
-                btnOtomatikDoldur.Visible = true;
-                MessageBox.Show("Yapacağınız işlemler direkt olarak veritabanını etkileyecektir.", "Dikkat" ,MessageBoxButtons.OK ,MessageBoxIcon.Warning);
+                passwordForm pwf = new passwordForm();
+                pwf.ShowDialog();
+                sifreDogru = pwf.sifreDogru;
+                if (sifreDogru)
+                {
+                    adminMode = true;
+                    dataViewSayac.EditMode = DataGridViewEditMode.EditOnF2;
+                    statusLabel.ForeColor = Color.Red;
+                    statusLabel.Font = new Font(defaultFont.FontFamily, defaultFont.Size, FontStyle.Bold);
+                    statusLabel.Text = "Edit mod açık.";
+                    btnOtomatikDoldur.Visible = true;
+                    btnVerileriYapistir.Visible = true;
+                    MessageBox.Show("Yapacağınız işlemler direkt olarak veritabanını etkileyecektir.", "Dikkat", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    sifreDogru = false;
+                    veriYapistir = false;
+                }
             }
         }
 
@@ -625,11 +686,38 @@ namespace SayacRapor
             }
         }
 
+        private void timer3_Tick(object sender, EventArgs e)
+        {
+            timer3.Enabled = false;
+            dataViewGunluk.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            dataViewSayac.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            for(int i = 0; i < dataViewGunluk.ColumnCount; i++)
+            {
+                dataViewGunluk.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                dataViewSayac.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                int wG = dataViewGunluk.Columns[i].Width;
+                int wS = dataViewSayac.Columns[i].Width;
+                if(wG < wS)
+                    dataViewGunluk.Columns[i].Width = wS;
+                else
+                    dataViewSayac.Columns[i].Width = wG;
+            }
+        }
+
         private void dataViewSayac_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             int row = dataViewSayac.CurrentCell.RowIndex;
             int cell = dataViewSayac.CurrentCell.ColumnIndex;
-            dataViewGunluk.CurrentCell = dataViewGunluk.Rows[row+1].Cells[cell];
+            try
+            {
+                if (row > dataViewGunluk.Rows.Count)
+                    row = row - 2;
+                dataViewGunluk.CurrentCell = dataViewGunluk.Rows[row + 1].Cells[cell];
+            }
+            catch
+            {
+
+            }
         }
 
         private void panel3_Paint(object sender, PaintEventArgs e)
@@ -705,7 +793,7 @@ namespace SayacRapor
 
         private void dataViewSayac_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if(adminMode)
+            if (adminMode && !veriYapistir)
             {
                 int rowIndex2 = dataViewSayac.CurrentCell.RowIndex;
                 int colIndex2 = dataViewSayac.CurrentCell.ColumnIndex;
@@ -722,7 +810,7 @@ namespace SayacRapor
                     {
                         //İnsert işlemleri
                         Decimal yeniKWHDec = Convert.ToDecimal(yeniKWH);
-                        string insertString = "INSERT INTO SAYAC_BILGISI (ISIM, KWH, TARIH, SAAT) VALUES ('" + sayacIsim2+ "', @yeniKWH, '" + tarih2+"', '8')";
+                        string insertString = "INSERT INTO SAYAC_BILGISI (ISIM, KWH, TARIH, SAAT) VALUES ('" + sayacIsim2 + "', @yeniKWH, '" + tarih2 + "', '8')";
                         SqlCommand insertCommand = new SqlCommand(insertString, con);
                         insertCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
                         if (con.State != ConnectionState.Open)
@@ -730,7 +818,7 @@ namespace SayacRapor
                             con.Open();
                         }
                         insertCommand.ExecuteNonQuery();
-                        if(con.State != ConnectionState.Closed)
+                        if (con.State != ConnectionState.Closed)
                         {
                             con.Close();
                         }
@@ -760,7 +848,7 @@ namespace SayacRapor
                         {
                             MessageBox.Show("Hata: " + ex);
                         }
-                        
+
                     }
                 }
             }
@@ -776,7 +864,6 @@ namespace SayacRapor
 
         private void ayarlarToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
             FormCollection fc = Application.OpenForms;
             foreach (Form frm in fc)
             {
@@ -786,19 +873,17 @@ namespace SayacRapor
                     return;
                 }
             }
-
-            SayacSettings sayacSettings = new SayacSettings();
-            sayacSettings.Show();
-            /*
-            SayacSettings sayacSettings = new SayacSettings();
-            if (Application.OpenForms["SayacSettings"] != null)
+            passwordForm pwf = new passwordForm();
+            pwf.ShowDialog();
+            sifreDogru = pwf.sifreDogru;
+            if (sifreDogru)
             {
-                sayacSettings.Activate();
-            }
-            else
-            {
+                sifreDogru = false;
+                SayacSettings sayacSettings = new SayacSettings();
+                sayacSettings.hataliVeriler = hataliVeriler;
+                sayacSettings.eksikKolonlar = eksikKolonlar;
                 sayacSettings.Show();
-            }*/
+            }
         }
 
         void panelBoyut()
@@ -829,6 +914,152 @@ namespace SayacRapor
                 ekstraKWH.Add(ekstraReader["ekstra_tuketim"]);
             }
             ekstraReader.Close();
+        }
+
+        private void PasteClipboard()
+        {
+            System.Threading.Thread.Sleep(400);
+            try
+            {
+                string s = Clipboard.GetText();
+                string[] lines = s.Split('\n');
+                int iFail = 0, iRow = dataViewSayac.CurrentCell.RowIndex;
+                int iCol = dataViewSayac.CurrentCell.ColumnIndex;
+                DataGridViewCell oCell;
+                foreach (string line in lines)
+                {
+                    if (iRow < dataViewSayac.RowCount && line.Length > 0)
+                    {
+                        string[] sCells = line.Split('\t');
+                        for (int i = 0; i < sCells.GetLength(0); ++i)
+                        {
+                            if (iCol + i < this.dataViewSayac.ColumnCount)
+                            {
+                                oCell = dataViewSayac[iCol + i, iRow];
+                                if (!oCell.ReadOnly)
+                                {
+                                    if (oCell.Value.ToString() != sCells[i])
+                                    {
+                                        oCell.Value = Convert.ChangeType(sCells[i],
+                                                              oCell.ValueType);
+                                        oCell.Style.BackColor = Color.Tomato;
+
+                                        int rowIndex2 = iRow;
+                                        int colIndex2 = iCol + i;
+                                        string sayacIsim2 = dataViewSayac.Columns[colIndex2].Name;
+                                        string tarih2 = dataViewSayac.Rows[rowIndex2].Cells["TARIH"].Value.ToString();
+                                        yeniKWH = Convert.ToDouble(sCells[i]);
+                                        //İnsert işlemleri
+                                        Decimal yeniKWHDec = Convert.ToDecimal(yeniKWH);
+                                        string insertString = "INSERT INTO SAYAC_BILGISI (ISIM, KWH, TARIH, SAAT) VALUES ('" + sayacIsim2 + "', @yeniKWH, '" + tarih2 + "', '8')";
+                                        SqlCommand insertCommand = new SqlCommand(insertString, con);
+                                        insertCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
+                                        if (con.State != ConnectionState.Open)
+                                        {
+                                            con.Open();
+                                        }
+                                        insertCommand.ExecuteNonQuery();
+                                        if (con.State != ConnectionState.Closed)
+                                        {
+                                            con.Close();
+                                        }
+                                    }
+                                    else
+                                        iFail++;
+                                    //only traps a fail if the data has changed 
+                                    //and you are pasting into a read only cell
+                                }
+                            }
+                            else
+                            { break; }
+                        }
+                        iRow++;
+                    }
+                    else
+                    { break; }
+                    if (iFail > 0)
+                        MessageBox.Show(string.Format("{0} updates failed due" +
+                                        " to read only column setting", iFail));
+                }
+                veriYapistir = false;
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("The data you pasted is in the wrong format for the cell");
+                return;
+            }
+        }
+
+        public static void PasteFromExcel(DataGridView dgv)
+        {
+            System.Threading.Thread.Sleep(399);
+            try
+            {
+                DataTable dataTable = new DataTable();
+                dataTable.TableName = "ImportedTable";
+                List<string> data = new List<string>(Clipboard.GetText().Split('\n'));
+                bool firstRow = true;
+
+                if (data.Count > 0 && string.IsNullOrWhiteSpace(data[data.Count - 1]))
+                {
+                    data.RemoveAt(data.Count - 1);
+                }
+
+                foreach (string iterationRow in data)
+                {
+                    string row = iterationRow;
+                    if (row.EndsWith("\r"))
+                    {
+                        row = row.Substring(0, row.Length - "\r".Length);
+                    }
+
+                    string[] rowData = row.Split(new char[] { '\r', '\x09' });
+                    DataRow newRow = dataTable.NewRow();
+                    if (firstRow)
+                    {
+                        int colNumber = 1;
+                        foreach (string value in rowData)
+                        {
+                            if (string.IsNullOrWhiteSpace(value))
+                            {
+
+                                dataTable.Columns.Add(string.Format("[BLANK{0}]", colNumber));
+                            }
+                            else if (!dataTable.Columns.Contains(value))
+                            {
+                                dataTable.Columns.Add(value);
+                            }
+                            else
+                            {
+                                dataTable.Columns.Add(string.Format("Column {0}", colNumber));
+                            }
+                            colNumber++;
+                        }
+                        firstRow = false;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < rowData.Length; i++)
+                        {
+                            if (i >= dataTable.Columns.Count) break;
+                            newRow[i] = rowData[i];
+                        }
+                        dataTable.Rows.Add(newRow);
+                    }
+                }
+                dgv.DataSource = dataTable;
+            }
+            catch (System.Data.DuplicateNameException x) { MessageBox.Show(x.ToString()); }
+        }
+
+
+        void bekle(int sec)
+        {
+            sec = ((sec + Convert.ToInt32(DateTime.Now.Second)) % 60);
+            for (; ; )
+            {
+                if (sec == DateTime.Now.Second) break;
+            }
         }
     }
 }

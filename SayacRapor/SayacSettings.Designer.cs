@@ -45,6 +45,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tabSayacEkstra = new System.Windows.Forms.TabPage();
+            this.btnEkstraSil = new System.Windows.Forms.Button();
             this.radioAktif = new System.Windows.Forms.RadioButton();
             this.radioTumu = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -65,11 +66,14 @@
             this.label6 = new System.Windows.Forms.Label();
             this.dataViewEkstra = new System.Windows.Forms.DataGridView();
             this.tabSayacGoruntule = new System.Windows.Forms.TabPage();
+            this.label13 = new System.Windows.Forms.Label();
+            this.listEksik = new System.Windows.Forms.ListBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.listHatali = new System.Windows.Forms.ListBox();
             this.buttonYeniSatir = new System.Windows.Forms.Button();
             this.btnSayacSil = new System.Windows.Forms.Button();
             this.dataViewSettings = new System.Windows.Forms.DataGridView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.btnEkstraSil = new System.Windows.Forms.Button();
             this.tabSayacEkle.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtSayacSira)).BeginInit();
             this.tabSayacEkstra.SuspendLayout();
@@ -104,7 +108,7 @@
             this.tabSayacEkle.Controls.Add(this.label1);
             this.tabSayacEkle.Location = new System.Drawing.Point(4, 25);
             this.tabSayacEkle.Name = "tabSayacEkle";
-            this.tabSayacEkle.Size = new System.Drawing.Size(1172, 784);
+            this.tabSayacEkle.Size = new System.Drawing.Size(1561, 675);
             this.tabSayacEkle.TabIndex = 2;
             this.tabSayacEkle.Text = "Sayaç Ekle";
             this.tabSayacEkle.UseVisualStyleBackColor = true;
@@ -241,10 +245,22 @@
             this.tabSayacEkstra.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabSayacEkstra.Name = "tabSayacEkstra";
             this.tabSayacEkstra.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabSayacEkstra.Size = new System.Drawing.Size(1172, 784);
+            this.tabSayacEkstra.Size = new System.Drawing.Size(1561, 675);
             this.tabSayacEkstra.TabIndex = 1;
             this.tabSayacEkstra.Text = "Sayaç Ekstra Tüketim";
             this.tabSayacEkstra.UseVisualStyleBackColor = true;
+            // 
+            // btnEkstraSil
+            // 
+            this.btnEkstraSil.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEkstraSil.Location = new System.Drawing.Point(1234, 235);
+            this.btnEkstraSil.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnEkstraSil.Name = "btnEkstraSil";
+            this.btnEkstraSil.Size = new System.Drawing.Size(200, 52);
+            this.btnEkstraSil.TabIndex = 18;
+            this.btnEkstraSil.Text = "Seçilen Ekstra Tüketimi Sil";
+            this.btnEkstraSil.UseVisualStyleBackColor = true;
+            this.btnEkstraSil.Click += new System.EventHandler(this.btnEkstraSil_Click);
             // 
             // radioAktif
             // 
@@ -275,7 +291,7 @@
             this.groupBox2.Controls.Add(this.buttonEkstraBitir);
             this.groupBox2.Controls.Add(this.label12);
             this.groupBox2.Controls.Add(this.dateTimeBitis2);
-            this.groupBox2.Location = new System.Drawing.Point(869, 497);
+            this.groupBox2.Location = new System.Drawing.Point(1145, 73);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(295, 129);
             this.groupBox2.TabIndex = 19;
@@ -322,7 +338,7 @@
             this.groupBox1.Controls.Add(this.cmbSayac);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.dateTimeBaslangic);
-            this.groupBox1.Location = new System.Drawing.Point(8, 497);
+            this.groupBox1.Location = new System.Drawing.Point(804, 68);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(335, 231);
             this.groupBox1.TabIndex = 16;
@@ -434,11 +450,15 @@
             this.dataViewEkstra.Name = "dataViewEkstra";
             this.dataViewEkstra.RowHeadersWidth = 51;
             this.dataViewEkstra.RowTemplate.Height = 24;
-            this.dataViewEkstra.Size = new System.Drawing.Size(1156, 423);
+            this.dataViewEkstra.Size = new System.Drawing.Size(790, 708);
             this.dataViewEkstra.TabIndex = 13;
             // 
             // tabSayacGoruntule
             // 
+            this.tabSayacGoruntule.Controls.Add(this.label13);
+            this.tabSayacGoruntule.Controls.Add(this.listEksik);
+            this.tabSayacGoruntule.Controls.Add(this.label11);
+            this.tabSayacGoruntule.Controls.Add(this.listHatali);
             this.tabSayacGoruntule.Controls.Add(this.buttonYeniSatir);
             this.tabSayacGoruntule.Controls.Add(this.btnSayacSil);
             this.tabSayacGoruntule.Controls.Add(this.dataViewSettings);
@@ -446,15 +466,53 @@
             this.tabSayacGoruntule.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabSayacGoruntule.Name = "tabSayacGoruntule";
             this.tabSayacGoruntule.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabSayacGoruntule.Size = new System.Drawing.Size(1172, 784);
+            this.tabSayacGoruntule.Size = new System.Drawing.Size(1510, 675);
             this.tabSayacGoruntule.TabIndex = 0;
             this.tabSayacGoruntule.Text = "Sayacları Görüntüle";
             this.tabSayacGoruntule.UseVisualStyleBackColor = true;
             // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.Location = new System.Drawing.Point(1107, 338);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(304, 20);
+            this.label13.TabIndex = 6;
+            this.label13.Text = "Sayaç tablosundaki eksik kolon isimleri;";
+            // 
+            // listEksik
+            // 
+            this.listEksik.FormattingEnabled = true;
+            this.listEksik.ItemHeight = 16;
+            this.listEksik.Location = new System.Drawing.Point(1111, 361);
+            this.listEksik.Name = "listEksik";
+            this.listEksik.Size = new System.Drawing.Size(383, 244);
+            this.listEksik.TabIndex = 5;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label11.Location = new System.Drawing.Point(1110, 11);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(333, 20);
+            this.label11.TabIndex = 4;
+            this.label11.Text = "Sayaç tablosundaki hatalı olabilecek veriler;";
+            // 
+            // listHatali
+            // 
+            this.listHatali.FormattingEnabled = true;
+            this.listHatali.ItemHeight = 16;
+            this.listHatali.Location = new System.Drawing.Point(1111, 34);
+            this.listHatali.Name = "listHatali";
+            this.listHatali.Size = new System.Drawing.Size(383, 292);
+            this.listHatali.TabIndex = 3;
+            // 
             // buttonYeniSatir
             // 
             this.buttonYeniSatir.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonYeniSatir.Location = new System.Drawing.Point(768, 623);
+            this.buttonYeniSatir.Location = new System.Drawing.Point(709, 623);
             this.buttonYeniSatir.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonYeniSatir.Name = "buttonYeniSatir";
             this.buttonYeniSatir.Size = new System.Drawing.Size(195, 42);
@@ -466,7 +524,7 @@
             // btnSayacSil
             // 
             this.btnSayacSil.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSayacSil.Location = new System.Drawing.Point(969, 623);
+            this.btnSayacSil.Location = new System.Drawing.Point(910, 623);
             this.btnSayacSil.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnSayacSil.Name = "btnSayacSil";
             this.btnSayacSil.Size = new System.Drawing.Size(195, 42);
@@ -485,7 +543,7 @@
             this.dataViewSettings.Name = "dataViewSettings";
             this.dataViewSettings.RowHeadersWidth = 51;
             this.dataViewSettings.RowTemplate.Height = 24;
-            this.dataViewSettings.Size = new System.Drawing.Size(1164, 613);
+            this.dataViewSettings.Size = new System.Drawing.Size(1105, 613);
             this.dataViewSettings.TabIndex = 0;
             this.dataViewSettings.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataViewSettings_CellBeginEdit);
             this.dataViewSettings.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataViewSettings_CellContentClick);
@@ -501,27 +559,15 @@
             this.tabControl1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1180, 813);
+            this.tabControl1.Size = new System.Drawing.Size(1518, 704);
             this.tabControl1.TabIndex = 0;
-            // 
-            // btnEkstraSil
-            // 
-            this.btnEkstraSil.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnEkstraSil.Location = new System.Drawing.Point(958, 664);
-            this.btnEkstraSil.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnEkstraSil.Name = "btnEkstraSil";
-            this.btnEkstraSil.Size = new System.Drawing.Size(200, 52);
-            this.btnEkstraSil.TabIndex = 18;
-            this.btnEkstraSil.Text = "Seçilen Ekstra Tüketimi Sil";
-            this.btnEkstraSil.UseVisualStyleBackColor = true;
-            this.btnEkstraSil.Click += new System.EventHandler(this.btnEkstraSil_Click);
             // 
             // SayacSettings
             // 
             this.AcceptButton = this.buttonEkstraBaslat;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1180, 813);
+            this.ClientSize = new System.Drawing.Size(1518, 704);
             this.Controls.Add(this.tabControl1);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "SayacSettings";
@@ -538,6 +584,7 @@
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataViewEkstra)).EndInit();
             this.tabSayacGoruntule.ResumeLayout(false);
+            this.tabSayacGoruntule.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataViewSettings)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -586,5 +633,9 @@
         private System.Windows.Forms.CheckBox checkBitis;
         private System.Windows.Forms.MaskedTextBox txtEkstraKWH;
         private System.Windows.Forms.Button btnEkstraSil;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.ListBox listEksik;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.ListBox listHatali;
     }
 }

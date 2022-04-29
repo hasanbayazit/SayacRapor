@@ -116,7 +116,7 @@ namespace SayacRapor
         private void haftalikGrafik_Load(object sender, EventArgs e)
         {
             con.Open();
-            string sayacString = "Select sayac_isim, sayac_carpan, sayac_min_tuketim From SAYAC_AYAR ORDER BY sayac_sira";
+            string sayacString = "Select sayac_isim, sayac_carpan, sayac_min_tuketim From SAYAC_AYAR ORDER BY sayac_isim";
             SqlCommand sayacCommand = new SqlCommand(sayacString, con);
             SqlDataReader sayacReader = sayacCommand.ExecuteReader();
             sayaclar.Columns.Add("sayac_isim");
