@@ -173,13 +173,9 @@ namespace SayacRapor
                 DataRow gunlukRow = gunlukTable.NewRow();
                 dinamikTarih = colDate[i].ToString();
                 string sonrakiGun = ilkGunDateTime.AddDays(1).ToString("yyyy-MM-dd");
-                if (ilkGunDateTime.AddDays(1) > endZaman)
+                if(ilkGunDateTime.AddDays(1) > DateTime.Now)
                 {
                     sonrakiGun = ilkGunDateTime.ToString("yyyy-MM-dd");
-                }
-                else
-                {
-                    sonrakiGun = ilkGunDateTime.AddDays(1).ToString("yyyy-MM-dd");
                 }
                 string dinamikString = "SELECT * From SAYAC_BILGISI WHERE TARIH = '" + sonrakiGun + "' AND KWH <> 0 ORDER BY KWH DESC";
                 SqlCommand dinamikCommand = new SqlCommand(dinamikString, con);
