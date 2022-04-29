@@ -33,19 +33,20 @@ namespace SayacRapor
         ArrayList colNames = new ArrayList();
         ArrayList colDate = new ArrayList();
         ArrayList colKWH = new ArrayList();
-        ArrayList listIlkIsım = new ArrayList();
+        ArrayList listBugunIsim = new ArrayList();
         ArrayList multipleCell = new ArrayList();
         ArrayList multipleCol = new ArrayList();
-        ArrayList listIlkKWH = new ArrayList();
+        ArrayList listBugunKWH = new ArrayList();
         ArrayList hataliVeriler = new ArrayList();
         ArrayList eksikKolonlar = new ArrayList();
         DataTable sayacTable = new DataTable();
         DataTable gunlukTable = new DataTable();
-        double oncekiKWH = 0, eskiKWH, yeniKWH;
-        string startDate, endDate, ilkGunString, oncekiGun, sayacIsim, tarih, dinamikTarih;
+        double bugunKWH = 0, eskiKWH, yeniKWH;
+        string startDate, endDate, ilkGunString, bugunTarih, sayacIsim, tarih, dinamikTarih;
         int haftaSayisi, sayi, rowSayi = 0;
         public bool sifreDogru = false, insertMode = true, veriYapistir = false;
         public bool adminMode = false;
+        bool gecenAySonGunEklendi = false;
         DateTime ilkGunDateTime, startZaman, endZaman;
         TimeSpan zaman;
         public static string conString;
@@ -152,18 +153,18 @@ namespace SayacRapor
             //KWH verileri tabloya eklendi.
             for (int i = 0; i < colDate.Count; i++)
             {
-                oncekiGun = ilkGunDateTime.AddDays(-1).ToString("yyyy-MM-dd");
-                string oncekiGunString = "SELECT * From SAYAC_BILGISI WHERE TARIH = '" + oncekiGun + "' AND KWH <> 0 ORDER BY KWH ASC";
+                bugunTarih = ilkGunDateTime.ToString("yyyy-MM-dd");
+                string oncekiGunString = "SELECT * From SAYAC_BILGISI WHERE TARIH = '" + bugunTarih + "' AND KWH <> 0 ORDER BY KWH ASC";
                 SqlCommand oncekiGunCommand = new SqlCommand(oncekiGunString, con);
                 SqlDataReader oncekiGunReader = oncekiGunCommand.ExecuteReader();
-                listIlkIsım.Clear();
-                listIlkKWH.Clear();
+                listBugunIsim.Clear();
+                listBugunKWH.Clear();
                 while (oncekiGunReader.Read())
                 {
-                    if(listIlkIsım.IndexOf(oncekiGunReader["ISIM"]) == -1)
+                    if(listBugunIsim.IndexOf(oncekiGunReader["ISIM"]) == -1)
                     {
-                        listIlkIsım.Add(oncekiGunReader["ISIM"]);
-                        listIlkKWH.Add(oncekiGunReader["KWH"]);
+                        listBugunIsim.Add(oncekiGunReader["ISIM"]);
+                        listBugunKWH.Add(oncekiGunReader["KWH"]);
                     }
                 }
                 oncekiGunReader.Close();
@@ -171,11 +172,20 @@ namespace SayacRapor
                 DataRow sayacRow = sayacTable.NewRow();
                 DataRow gunlukRow = gunlukTable.NewRow();
                 dinamikTarih = colDate[i].ToString();
-                string dinamikString = "SELECT * From SAYAC_BILGISI WHERE TARIH = '" + dinamikTarih + "' AND KWH <> 0 ORDER BY KWH DESC";
+                string sonrakiGun = ilkGunDateTime.AddDays(1).ToString("yyyy-MM-dd");
+                if (ilkGunDateTime.AddDays(1) > endZaman)
+                {
+                    sonrakiGun = ilkGunDateTime.ToString("yyyy-MM-dd");
+                }
+                else
+                {
+                    sonrakiGun = ilkGunDateTime.AddDays(1).ToString("yyyy-MM-dd");
+                }
+                string dinamikString = "SELECT * From SAYAC_BILGISI WHERE TARIH = '" + sonrakiGun + "' AND KWH <> 0 ORDER BY KWH DESC";
                 SqlCommand dinamikCommand = new SqlCommand(dinamikString, con);
                 SqlDataReader dinamikReader = dinamikCommand.ExecuteReader();
-                sayacRow["TARIH"] = dinamikTarih;
-                gunlukRow["TARIH"] = dinamikTarih;
+                sayacRow["TARIH"] = bugunTarih;
+                gunlukRow["TARIH"] = bugunTarih;
                 while (dinamikReader.Read())
                 {
                     int carpan;
@@ -185,16 +195,16 @@ namespace SayacRapor
                         carpan = Convert.ToInt32(gunlukTable.Rows[0][indexName]);
                     else
                         carpan = 1;
-                    double KWH = Convert.ToDouble(dinamikReader["KWH"]);
+                    double sonrakiKWH = Convert.ToDouble(dinamikReader["KWH"]);
                     int nameIndex = sayacTable.Columns.IndexOf(indexName);
                     int tarihIndex = colDate.IndexOf(indexTarih) + 1;
-                    if (listIlkIsım.IndexOf(indexName) != -1)
+                    if (listBugunIsim.IndexOf(indexName) != -1)
                     {
-                        oncekiKWH = Convert.ToDouble(listIlkKWH[listIlkIsım.IndexOf(indexName)]);
+                        bugunKWH = Convert.ToDouble(listBugunKWH[listBugunIsim.IndexOf(indexName)]);
                     }
                     else
                     {
-                        oncekiKWH = 0;
+                        bugunKWH = 0;
                         //
                         if(nameIndex != -1)
                         {
@@ -207,8 +217,8 @@ namespace SayacRapor
 
                     if (nameIndex != -1)
                     {
-                        double gunlukTuketim = Math.Round(((KWH - oncekiKWH)*carpan), 3);
-                        sayacRow[indexName] = KWH;
+                        double gunlukTuketim = Math.Round(((sonrakiKWH - bugunKWH) * carpan), 3);
+                        sayacRow[indexName] = bugunKWH;
                         if (ekstraSayac.IndexOf(indexName) != -1)
                         {
                             for (int j = 0; j < ekstraSayac.Count; j++)
@@ -236,7 +246,7 @@ namespace SayacRapor
                         if (eksikKolonlar.IndexOf(indexName) == -1)
                             eksikKolonlar.Add(indexName);
                     }
-                    KWH = 0;
+                    sonrakiKWH = 0;
                 }
                 sayacTable.Rows.Add(sayacRow);
                 gunlukTable.Rows.Add(gunlukRow);
@@ -365,10 +375,10 @@ namespace SayacRapor
             colNames.Clear();
             colDate.Clear();
             colKWH.Clear();
-            listIlkIsım.Clear();
+            listBugunIsim.Clear();
             multipleCell.Clear();
             multipleCol.Clear();
-            listIlkKWH.Clear();
+            listBugunKWH.Clear();
             dataViewSayac.DataSource = null;
             dataViewGunluk.DataSource = null;
             colNames.Clear();
