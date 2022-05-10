@@ -92,7 +92,7 @@
             this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox2.Size = new System.Drawing.Size(1727, 80);
+            this.groupBox2.Size = new System.Drawing.Size(1664, 80);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             // 
@@ -102,7 +102,7 @@
             this.lblKapasitif.AutoSize = true;
             this.lblKapasitif.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblKapasitif.ForeColor = System.Drawing.Color.Black;
-            this.lblKapasitif.Location = new System.Drawing.Point(1534, 44);
+            this.lblKapasitif.Location = new System.Drawing.Point(1471, 44);
             this.lblKapasitif.Name = "lblKapasitif";
             this.lblKapasitif.Size = new System.Drawing.Size(56, 25);
             this.lblKapasitif.TabIndex = 17;
@@ -114,7 +114,7 @@
             this.lblEnduktif.AutoSize = true;
             this.lblEnduktif.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblEnduktif.ForeColor = System.Drawing.Color.Black;
-            this.lblEnduktif.Location = new System.Drawing.Point(1534, 16);
+            this.lblEnduktif.Location = new System.Drawing.Point(1471, 16);
             this.lblEnduktif.Name = "lblEnduktif";
             this.lblEnduktif.Size = new System.Drawing.Size(56, 25);
             this.lblEnduktif.TabIndex = 16;
@@ -236,7 +236,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1724, 470);
+            this.panel1.Size = new System.Drawing.Size(1661, 470);
             this.panel1.TabIndex = 12;
             // 
             // dataViewSayac
@@ -253,7 +253,7 @@
             this.dataViewSayac.Name = "dataViewSayac";
             this.dataViewSayac.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataViewSayac.RowTemplate.Height = 24;
-            this.dataViewSayac.Size = new System.Drawing.Size(1724, 470);
+            this.dataViewSayac.Size = new System.Drawing.Size(1661, 470);
             this.dataViewSayac.TabIndex = 7;
             this.dataViewSayac.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataViewSayac_CellBeginEdit);
             this.dataViewSayac.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataViewSayac_CellMouseClick);
@@ -267,7 +267,7 @@
             this.panel2.Location = new System.Drawing.Point(0, 508);
             this.panel2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1724, 470);
+            this.panel2.Size = new System.Drawing.Size(1661, 470);
             this.panel2.TabIndex = 13;
             // 
             // dataViewGunluk
@@ -284,7 +284,7 @@
             this.dataViewGunluk.Name = "dataViewGunluk";
             this.dataViewGunluk.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataViewGunluk.RowTemplate.Height = 24;
-            this.dataViewGunluk.Size = new System.Drawing.Size(1724, 470);
+            this.dataViewGunluk.Size = new System.Drawing.Size(1661, 470);
             this.dataViewGunluk.TabIndex = 8;
             this.dataViewGunluk.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataViewGunluk_CellMouseClick);
             this.dataViewGunluk.Scroll += new System.Windows.Forms.ScrollEventHandler(this.dataViewGunluk_Scroll);
@@ -298,7 +298,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1901, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1423, 28);
             this.menuStrip1.TabIndex = 14;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -359,7 +359,7 @@
             this.panel3.Location = new System.Drawing.Point(16, 116);
             this.panel3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1726, 980);
+            this.panel3.Size = new System.Drawing.Size(1663, 980);
             this.panel3.TabIndex = 15;
             this.panel3.Paint += new System.Windows.Forms.PaintEventHandler(this.panel3_Paint);
             // 
@@ -372,7 +372,7 @@
             this.statusStrip1.Location = new System.Drawing.Point(0, 1096);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 19, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1901, 24);
+            this.statusStrip1.Size = new System.Drawing.Size(1423, 24);
             this.statusStrip1.TabIndex = 16;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -417,17 +417,19 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoScroll = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(1922, 875);
+            this.ClientSize = new System.Drawing.Size(1444, 875);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.menuStrip1);
+            this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "MainForm";
-            this.Text = "Sayaç Raporu v1.0.1.0";
+            this.Text = "Sayaç Raporu v1.0.2.1";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.panel1.ResumeLayout(false);

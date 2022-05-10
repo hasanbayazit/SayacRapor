@@ -217,21 +217,33 @@ namespace SayacRapor
             string baslangicTarihi = dateTimeBaslangic.Value.ToString("yyyy-MM-dd");
             string bitisTarihi = dateTimeBitis.Value.ToString("yyyy-MM-dd");
             string sayacIsim = cmbSayac.Text;
-            decimal ekstraTuketim = Math.Round(Convert.ToDecimal(txtEkstraKWH.Text),3);
+            decimal ekstraTuketim = Convert.ToDecimal(txtEkstraKWH.Text);
+            decimal ekstraDec = Convert.ToDecimal(ekstraTuketim);
             string ekstraInsert;
             if(checkBitis.Checked)
+            {
                 ekstraInsert = "INSERT INTO SAYAC_EKSTRA (baslangic_tarihi, bitis_tarihi, sayac_isim, ekstra_tuketim) VALUES (@baslangicTarihi,@bitisTarihi,@sayacIsim,@ekstraTuketim)";
+                SqlCommand ekstraCommand = new SqlCommand(ekstraInsert, con);
+                ekstraCommand.Parameters.Add(new SqlParameter("baslangicTarihi", baslangicTarihi));
+                ekstraCommand.Parameters.Add(new SqlParameter("bitisTarihi", bitisTarihi));
+                ekstraCommand.Parameters.Add(new SqlParameter("sayacIsim", sayacIsim));
+                ekstraCommand.Parameters.Add(new SqlParameter("ekstraTuketim", ekstraDec));
+                con.Open();
+                ekstraCommand.ExecuteNonQuery();
+                con.Close();
+            }
             else
+            {
                 ekstraInsert = "INSERT INTO SAYAC_EKSTRA (baslangic_tarihi, sayac_isim, ekstra_tuketim) VALUES (@baslangicTarihi,@sayacIsim,@ekstraTuketim)";
+                SqlCommand ekstraCommand = new SqlCommand(ekstraInsert, con);
+                ekstraCommand.Parameters.Add(new SqlParameter("baslangicTarihi", baslangicTarihi));
+                ekstraCommand.Parameters.Add(new SqlParameter("sayacIsim", sayacIsim));
+                ekstraCommand.Parameters.Add(new SqlParameter("ekstraTuketim", ekstraDec));
+                con.Open();
+                ekstraCommand.ExecuteNonQuery();
+                con.Close();
+            }
 
-            SqlCommand ekstraCommand = new SqlCommand(ekstraInsert, con);
-            ekstraCommand.Parameters.Add(new SqlParameter("baslangicTarihi", baslangicTarihi));
-            ekstraCommand.Parameters.Add(new SqlParameter("bitisTarihi", bitisTarihi));
-            ekstraCommand.Parameters.Add(new SqlParameter("sayacIsim", sayacIsim));
-            ekstraCommand.Parameters.Add(new SqlParameter("ekstraTuketim", ekstraTuketim));
-            con.Open();
-            ekstraCommand.ExecuteNonQuery();
-            con.Close();
             ekstraTuketimGetir();
             MessageBox.Show("Ekstra tüketim ekleme başarılı.");
             checkBitis.Checked = false;

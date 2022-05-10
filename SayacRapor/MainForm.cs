@@ -34,6 +34,8 @@ namespace SayacRapor
         ArrayList colDate = new ArrayList();
         ArrayList colKWH = new ArrayList();
         ArrayList listBugunIsim = new ArrayList();
+        ArrayList listSonraIsim = new ArrayList();
+        ArrayList listSonraKWH = new ArrayList();
         ArrayList multipleCell = new ArrayList();
         ArrayList multipleCol = new ArrayList();
         ArrayList listBugunKWH = new ArrayList();
@@ -41,10 +43,10 @@ namespace SayacRapor
         ArrayList eksikKolonlar = new ArrayList();
         DataTable sayacTable = new DataTable();
         DataTable gunlukTable = new DataTable();
-        double bugunKWH = 0, eskiKWH, yeniKWH;
+        decimal bugunKWH = 0, eskiKWH, yeniKWH;
         string startDate, endDate, ilkGunString, bugunTarih, sayacIsim, tarih, dinamikTarih;
         int haftaSayisi, sayi, rowSayi = 0;
-        public bool sifreDogru = false, insertMode = true, veriYapistir = false;
+        public bool sifreDogru = false, insertMode = true, veriYapistir = false, veriSil = false;
         public bool adminMode = false;
         bool gecenAySonGunEklendi = false;
         DateTime ilkGunDateTime, startZaman, endZaman;
@@ -154,99 +156,122 @@ namespace SayacRapor
             for (int i = 0; i < colDate.Count; i++)
             {
                 bugunTarih = ilkGunDateTime.ToString("yyyy-MM-dd");
-                string oncekiGunString = "SELECT * From SAYAC_BILGISI WHERE TARIH = '" + bugunTarih + "' AND KWH <> 0 ORDER BY KWH ASC";
-                SqlCommand oncekiGunCommand = new SqlCommand(oncekiGunString, con);
-                SqlDataReader oncekiGunReader = oncekiGunCommand.ExecuteReader();
-                listBugunIsim.Clear();
-                listBugunKWH.Clear();
-                while (oncekiGunReader.Read())
-                {
-                    if(listBugunIsim.IndexOf(oncekiGunReader["ISIM"]) == -1)
-                    {
-                        listBugunIsim.Add(oncekiGunReader["ISIM"]);
-                        listBugunKWH.Add(oncekiGunReader["KWH"]);
-                    }
-                }
-                oncekiGunReader.Close();
-
-                DataRow sayacRow = sayacTable.NewRow();
-                DataRow gunlukRow = gunlukTable.NewRow();
-                dinamikTarih = colDate[i].ToString();
                 string sonrakiGun = ilkGunDateTime.AddDays(1).ToString("yyyy-MM-dd");
-                if(ilkGunDateTime.AddDays(1) > DateTime.Now)
+                if (ilkGunDateTime.AddDays(1) > DateTime.Now)
                 {
                     sonrakiGun = ilkGunDateTime.ToString("yyyy-MM-dd");
                 }
-                string dinamikString = "SELECT * From SAYAC_BILGISI WHERE TARIH = '" + sonrakiGun + "' AND KWH <> 0 ORDER BY KWH DESC";
-                SqlCommand dinamikCommand = new SqlCommand(dinamikString, con);
-                SqlDataReader dinamikReader = dinamikCommand.ExecuteReader();
-                sayacRow["TARIH"] = bugunTarih;
-                gunlukRow["TARIH"] = bugunTarih;
-                while (dinamikReader.Read())
+                string bugunString = "SELECT * From SAYAC_BILGISI WHERE TARIH >= '" + bugunTarih + "' AND TARIH <= '" + sonrakiGun + "' AND KWH <> 0 ORDER BY KWH ASC";
+                SqlCommand bugunCommand = new SqlCommand(bugunString, con);
+                SqlDataReader bugunReader = bugunCommand.ExecuteReader();
+                listBugunIsim.Clear();
+                listBugunKWH.Clear();
+                listSonraIsim.Clear();
+                listSonraKWH.Clear();
+                while (bugunReader.Read())
                 {
-                    int carpan;
-                    string indexName = dinamikReader["ISIM"].ToString();
-                    string indexTarih = dinamikReader["TARIH"].ToString();
-                    if (gunlukTable.Columns.IndexOf(indexName) != -1)
-                        carpan = Convert.ToInt32(gunlukTable.Rows[0][indexName]);
-                    else
-                        carpan = 1;
-                    double sonrakiKWH = Convert.ToDouble(dinamikReader["KWH"]);
-                    int nameIndex = sayacTable.Columns.IndexOf(indexName);
-                    int tarihIndex = colDate.IndexOf(indexTarih) + 1;
-                    if (listBugunIsim.IndexOf(indexName) != -1)
+                    if(bugunTarih == bugunReader["TARIH"].ToString())
                     {
-                        bugunKWH = Convert.ToDouble(listBugunKWH[listBugunIsim.IndexOf(indexName)]);
+                        if (listBugunIsim.IndexOf(bugunReader["ISIM"]) == -1)
+                        {
+                            listBugunIsim.Add(bugunReader["ISIM"]);
+                            listBugunKWH.Add(bugunReader["KWH"]);
+                        }
                     }
+                    if(sonrakiGun == bugunReader["TARIH"].ToString())
+                    {
+                        if (listSonraIsim.IndexOf(bugunReader["ISIM"]) == -1)
+                        {
+                            listSonraIsim.Add(bugunReader["ISIM"]);
+                            listSonraKWH.Add(bugunReader["KWH"]);
+                        }
+                    }
+                }
+                bugunReader.Close();
+                int donguSayisi;
+                if (listBugunIsim.Count < listSonraIsim.Count)
+                    donguSayisi = listSonraIsim.Count;
+                else
+                    donguSayisi = listBugunIsim.Count;
+                DataRow sayacRow = sayacTable.NewRow();
+                DataRow gunlukRow = gunlukTable.NewRow();
+                for (int l = 0; l < donguSayisi; l++) 
+                {
+                    int carpan; 
+                    decimal sonrakiKWH;
+                    string bugunIsim;
+
+                    if (listBugunIsim.Count < listSonraIsim.Count)
+                        bugunIsim = listSonraIsim[l].ToString();
+                    else
+                        bugunIsim = listBugunIsim[l].ToString();
+
+                    int nameIndex = sayacTable.Columns.IndexOf(bugunIsim);
+                    int tarihIndex = colDate.IndexOf(bugunTarih) + 1;
+                    if (listBugunIsim.IndexOf(bugunIsim) != -1)
+                        bugunKWH = Convert.ToDecimal(listBugunKWH[listBugunIsim.IndexOf(bugunIsim)]);
                     else
                     {
                         bugunKWH = 0;
                         //
-                        if(nameIndex != -1)
+                        if (nameIndex != -1)
                         {
                             renklendirCol.Add(nameIndex);
                             renklendirRow.Add(tarihIndex);
-                            if(hataliVeriler.IndexOf(indexName) == -1)
-                                hataliVeriler.Add(indexName);
+                            if (hataliVeriler.IndexOf(bugunIsim) == -1)
+                                hataliVeriler.Add(bugunIsim);
                         }
                     }
 
+                    if (listSonraIsim.IndexOf(bugunIsim) != -1)
+                        sonrakiKWH = Convert.ToDecimal(listSonraKWH[listSonraIsim.IndexOf(bugunIsim)]);
+                    else
+                        sonrakiKWH = 0;
+                    
+                    if (gunlukTable.Columns.IndexOf(bugunIsim) != -1)
+                        carpan = Convert.ToInt32(gunlukTable.Rows[0][bugunIsim]);
+                    else
+                        carpan = 1;
+
                     if (nameIndex != -1)
                     {
-                        double gunlukTuketim = Math.Round(((sonrakiKWH - bugunKWH) * carpan), 3);
-                        sayacRow[indexName] = bugunKWH;
-                        if (ekstraSayac.IndexOf(indexName) != -1)
+                        int gunlukTuketim = Convert.ToInt32(((sonrakiKWH - bugunKWH) * carpan));
+                        sayacRow[bugunIsim] = bugunKWH;
+                        if (ekstraSayac.IndexOf(bugunIsim) != -1)
                         {
                             for (int j = 0; j < ekstraSayac.Count; j++)
                             {
-                                if(ekstraSayac[j].ToString() == indexName)
+                                if (ekstraSayac[j].ToString() == bugunIsim)
                                 {
-                                    if(Convert.ToDateTime(ekstraBaslangic[j]) <= Convert.ToDateTime(indexTarih) && Convert.ToDateTime(ekstraBitis[j]) >= Convert.ToDateTime(indexTarih))
+                                    if (Convert.ToDateTime(ekstraBaslangic[j]) <= Convert.ToDateTime(bugunTarih) && Convert.ToDateTime(ekstraBitis[j]) >= Convert.ToDateTime(bugunTarih))
                                     {
-                                        gunlukTuketim += Convert.ToDouble(ekstraKWH[j]);
+                                        gunlukTuketim += Convert.ToInt32(ekstraKWH[j]);
                                     }
                                 }
                             }
                         }
-                        gunlukRow[indexName] = gunlukTuketim;
-                        if(gunlukTuketim < 0)
+                        sonrakiKWH = bugunKWH;
+                        gunlukRow[bugunIsim] = gunlukTuketim;
+                        if (gunlukTuketim < 0)
                         {
                             renklendirCol.Add(nameIndex);
                             renklendirRow.Add(tarihIndex);
-                            if (hataliVeriler.IndexOf(indexName) == -1)
-                                hataliVeriler.Add(indexName);
+                            if (hataliVeriler.IndexOf(bugunIsim) == -1)
+                                hataliVeriler.Add(bugunIsim);
                         }
                     }
                     else
                     {
-                        if (eksikKolonlar.IndexOf(indexName) == -1)
-                            eksikKolonlar.Add(indexName);
+                        if (eksikKolonlar.IndexOf(bugunIsim) == -1)
+                            eksikKolonlar.Add(bugunIsim);
                     }
-                    sonrakiKWH = 0;
+                    sonrakiKWH = bugunKWH;
                 }
+
+                sayacRow["TARIH"] = bugunTarih;
+                gunlukRow["TARIH"] = bugunTarih;
                 sayacTable.Rows.Add(sayacRow);
                 gunlukTable.Rows.Add(gunlukRow);
-                dinamikReader.Close();
                 ilkGunDateTime = ilkGunDateTime.AddDays(1);
             }
             progressBar.Value = 80;
@@ -278,7 +303,7 @@ namespace SayacRapor
             {
                 double gOrt = Convert.ToDouble(gunlukOrtalama[i]);
                 int bol = Convert.ToInt16(ortalamaBolen[i]);
-                gunlukOrt[i+1] = Math.Round(gOrt  / bol,3);
+                gunlukOrt[i + 1] = Math.Round((gOrt / bol), 0);
             }
             gunlukTable.Rows.Add(gunlukOrt);
             for (int k = 0; k < gunlukTable.Columns.Count-1; k++)
@@ -581,7 +606,7 @@ namespace SayacRapor
                 if (sifreDogru)
                 {
                     adminMode = true;
-                    dataViewSayac.EditMode = DataGridViewEditMode.EditOnF2;
+                    dataViewSayac.EditMode = DataGridViewEditMode.EditOnKeystrokeOrF2;
                     statusLabel.ForeColor = Color.Red;
                     statusLabel.Font = new Font(defaultFont.FontFamily, defaultFont.Size, FontStyle.Bold);
                     statusLabel.Text = "Edit mod açık.";
@@ -651,9 +676,11 @@ namespace SayacRapor
                         string tmpTarih = sayacTable.Rows[indexAktif]["TARIH"].ToString();
                         if (eskiKWHDec == -1)
                         {
-                            string insertString = "INSERT INTO SAYAC_BILGISI (ISIM, KWH, TARIH, SAAT) VALUES ('" + tmpIsim + "', @yeniKWH, '" + tmpTarih + "', '8')";
+                            string insertString = "INSERT INTO SAYAC_BILGISI (ISIM, KWH, TARIH, SAAT) VALUES (@sayacIsim, @yeniKWH, @tarih, '8')";
                             SqlCommand insertCommand = new SqlCommand(insertString, con);
-                            insertCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
+                            insertCommand.Parameters.Add("@sayacIsim", SqlDbType.VarChar).Value = tmpIsim;
+                            insertCommand.Parameters.Add("@tarih", SqlDbType.VarChar).Value = tmpTarih;
+                            insertCommand.Parameters.Add("@yeniKWH", SqlDbType.Decimal).Value = yeniKWHDec;
                             if (con.State != ConnectionState.Open)
                                 con.Open();
                             insertCommand.ExecuteNonQuery();
@@ -662,10 +689,12 @@ namespace SayacRapor
                         }
                         else
                         {
-                            string updateString = "UPDATE SAYAC_BILGISI SET KWH = @yeniKWH WHERE ISIM = '" + tmpIsim + "' AND TARIH = '" + tmpTarih + "' AND KWH = '"+eskiKWHDec+"'";
+                            string updateString = "UPDATE SAYAC_BILGISI SET KWH = @yeniKWH WHERE ISIM = @sayacIsim AND TARIH = @tarih AND KWH = @eskiKWH";
                             SqlCommand updateCommand = new SqlCommand(updateString, con);
-                            updateCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
-                            updateCommand.Parameters.Add(new SqlParameter("eskiKWH", eskiKWHDec));
+                            updateCommand.Parameters.Add("@sayacIsim", SqlDbType.VarChar).Value = tmpIsim;
+                            updateCommand.Parameters.Add("@tarih", SqlDbType.VarChar).Value = tmpTarih;
+                            updateCommand.Parameters.Add("@yeniKWH", SqlDbType.Decimal).Value = yeniKWHDec;
+                            updateCommand.Parameters.Add("@eskiKWH", SqlDbType.Decimal).Value = eskiKWHDec;
                             if (con.State != ConnectionState.Open)
                                 con.Open();
                             updateCommand.ExecuteNonQuery();
@@ -707,6 +736,42 @@ namespace SayacRapor
                     dataViewGunluk.Columns[i].Width = wS;
                 else
                     dataViewSayac.Columns[i].Width = wG;
+            }
+        }
+
+        private void MainForm_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(adminMode)
+            {
+                switch (e.KeyData)
+                {
+                    case Keys.Delete:
+                        veriSil = true;
+                        foreach (DataGridViewCell cell in dataViewSayac.SelectedCells)
+                        {
+                            int rowIndex = cell.RowIndex;
+                            int colIndex = cell.ColumnIndex;
+                            string tmpIsim = sayacTable.Columns[colIndex].ToString();
+                            string tmpKWH = sayacTable.Rows[rowIndex][colIndex].ToString();
+                            string tmpTarih = sayacTable.Rows[rowIndex][0].ToString();
+                            //MessageBox.Show("Seçilen tarih: " + tmpTarih + "\n seçilen sayaç: " + tmpIsim + "\n seçilen KWH: " + tmpKWH);
+                            if (tmpKWH.ToString() != "")
+                            {
+                                string deleteString = "DELETE FROM SAYAC_BILGISI WHERE ISIM = @isim AND TARIH = @tarih AND KWH = @kwh";
+                                SqlCommand deleteCommand = new SqlCommand(deleteString, con);
+                                deleteCommand.Parameters.Add("@isim", SqlDbType.VarChar).Value = tmpIsim;
+                                deleteCommand.Parameters.Add("@tarih", SqlDbType.VarChar).Value = tmpTarih;
+                                deleteCommand.Parameters.Add("@kwh", SqlDbType.Decimal).Value = tmpKWH;
+                                con.Open();
+                                deleteCommand.ExecuteNonQuery();
+                                con.Close();
+                                dataViewSayac[colIndex, rowIndex].Value = "";
+                                //MessageBox.Show("Silindi. \nSeçilen tarih: " + tmpTarih + "\nSeçilen sayaç: " + tmpIsim + "\nSeçilen KWH: " + tmpKWH);
+                            }
+                        }
+                        veriSil = false;
+                        break;
+                }
             }
         }
 
@@ -781,7 +846,7 @@ namespace SayacRapor
                     tarih = dataViewSayac.Rows[rowIndex].Cells["TARIH"].Value.ToString();
                     if (dataViewSayac.Rows[rowIndex].Cells[sayacIsim].Value.ToString() != "")
                     {
-                        eskiKWH = Convert.ToDouble(dataViewSayac.Rows[rowIndex].Cells[sayacIsim].Value);
+                        eskiKWH = Convert.ToDecimal(dataViewSayac.Rows[rowIndex].Cells[sayacIsim].Value);
                         insertMode = false;
                     }
                     else
@@ -799,7 +864,7 @@ namespace SayacRapor
 
         private void dataViewSayac_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (adminMode && !veriYapistir)
+            if (adminMode && !veriYapistir && !veriSil)
             {
                 int rowIndex2 = dataViewSayac.CurrentCell.RowIndex;
                 int colIndex2 = dataViewSayac.CurrentCell.ColumnIndex;
@@ -807,7 +872,7 @@ namespace SayacRapor
                 string tarih2 = dataViewSayac.Rows[rowIndex2].Cells["TARIH"].Value.ToString();
                 if (dataViewSayac.Rows[rowIndex2].Cells[sayacIsim].Value.ToString() != "")
                 {
-                    yeniKWH = Convert.ToDouble(dataViewSayac.Rows[rowIndex2].Cells[sayacIsim].Value);
+                    yeniKWH = Convert.ToDecimal(dataViewSayac.Rows[rowIndex2].Cells[sayacIsim].Value);
                 }
                 if (sayacIsim == sayacIsim2 && tarih == tarih2 && eskiKWH != yeniKWH)
                 {
@@ -816,9 +881,11 @@ namespace SayacRapor
                     {
                         //İnsert işlemleri
                         Decimal yeniKWHDec = Convert.ToDecimal(yeniKWH);
-                        string insertString = "INSERT INTO SAYAC_BILGISI (ISIM, KWH, TARIH, SAAT) VALUES ('" + sayacIsim2 + "', @yeniKWH, '" + tarih2 + "', '8')";
+                        string insertString = "INSERT INTO SAYAC_BILGISI (ISIM, KWH, TARIH, SAAT) VALUES (@sayacIsim, @yeniKWH, @tarih, '8')";
                         SqlCommand insertCommand = new SqlCommand(insertString, con);
-                        insertCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
+                        insertCommand.Parameters.Add("@sayacIsim", SqlDbType.VarChar).Value = sayacIsim2;
+                        insertCommand.Parameters.Add("@tarih", SqlDbType.VarChar).Value = tarih2;
+                        insertCommand.Parameters.Add("@yeniKWH", SqlDbType.Decimal).Value = yeniKWHDec;
                         if (con.State != ConnectionState.Open)
                         {
                             con.Open();
@@ -836,10 +903,12 @@ namespace SayacRapor
                             //Update işlemleri
                             Decimal yeniKWHDec = Convert.ToDecimal(yeniKWH);
                             Decimal eskiKWHDec = Convert.ToDecimal(eskiKWH);
-                            string updateString = "UPDATE SAYAC_BILGISI SET KWH = @yeniKWH WHERE ISIM = '" + sayacIsim2 + "' AND TARIH = '" + tarih2 + "' AND KWH = @eskiKWH";
+                            string updateString = "UPDATE SAYAC_BILGISI SET KWH = @yeniKWH WHERE ISIM = @sayacIsim AND TARIH = @tarih  AND KWH = @eskiKWH";
                             SqlCommand updateCommand = new SqlCommand(updateString, con);
-                            updateCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
-                            updateCommand.Parameters.Add(new SqlParameter("eskiKWH", eskiKWHDec));
+                            updateCommand.Parameters.Add("@sayacIsim", SqlDbType.VarChar).Value = sayacIsim2;
+                            updateCommand.Parameters.Add("@tarih", SqlDbType.VarChar).Value = tarih2;
+                            updateCommand.Parameters.Add("@yeniKWH", SqlDbType.Decimal).Value = yeniKWHDec;
+                            updateCommand.Parameters.Add("@eskiKWH", SqlDbType.Decimal).Value = eskiKWHDec;
                             if (con.State != ConnectionState.Open)
                             {
                                 con.Open();
@@ -946,29 +1015,57 @@ namespace SayacRapor
                                 {
                                     if (oCell.Value.ToString() != sCells[i])
                                     {
-                                        oCell.Value = Convert.ChangeType(sCells[i],
-                                                              oCell.ValueType);
-                                        oCell.Style.BackColor = Color.Tomato;
-
+                                        decimal eskiKWHDec;
                                         int rowIndex2 = iRow;
                                         int colIndex2 = iCol + i;
+                                        if (sayacTable.Rows[rowIndex2][colIndex2].ToString() == "")
+                                            eskiKWHDec = -1;
+                                        else
+                                            eskiKWHDec = Convert.ToDecimal(sayacTable.Rows[rowIndex2][colIndex2]);
+
+                                        yeniKWH = Convert.ToDecimal(sCells[i]);
+                                        oCell.Value = Convert.ChangeType(sCells[i], oCell.ValueType);
+                                        oCell.Style.BackColor = Color.Tomato;
                                         string sayacIsim2 = dataViewSayac.Columns[colIndex2].Name;
                                         string tarih2 = dataViewSayac.Rows[rowIndex2].Cells["TARIH"].Value.ToString();
-                                        yeniKWH = Convert.ToDouble(sCells[i]);
-                                        //İnsert işlemleri
+
                                         Decimal yeniKWHDec = Convert.ToDecimal(yeniKWH);
-                                        string insertString = "INSERT INTO SAYAC_BILGISI (ISIM, KWH, TARIH, SAAT) VALUES ('" + sayacIsim2 + "', @yeniKWH, '" + tarih2 + "', '8')";
-                                        SqlCommand insertCommand = new SqlCommand(insertString, con);
-                                        insertCommand.Parameters.Add(new SqlParameter("yeniKWH", yeniKWHDec));
-                                        if (con.State != ConnectionState.Open)
+
+                                        if (eskiKWHDec == -1)
                                         {
-                                            con.Open();
+                                            //İnsert işlemleri
+                                            string insertString = "INSERT INTO SAYAC_BILGISI (ISIM, KWH, TARIH, SAAT) VALUES (@sayacIsim, @yeniKWH, @tarih, '8')";
+                                            SqlCommand insertCommand = new SqlCommand(insertString, con);
+                                            insertCommand.Parameters.Add("@sayacIsim", SqlDbType.VarChar).Value = sayacIsim2;
+                                            insertCommand.Parameters.Add("@tarih", SqlDbType.VarChar).Value = tarih2;
+                                            insertCommand.Parameters.Add("@yeniKWH", SqlDbType.Decimal).Value = yeniKWH;
+                                            if (con.State != ConnectionState.Open)
+                                            {
+                                                con.Open();
+                                            }
+                                            insertCommand.ExecuteNonQuery();
+                                            if (con.State != ConnectionState.Closed)
+                                            {
+                                                con.Close();
+                                            }
                                         }
-                                        insertCommand.ExecuteNonQuery();
-                                        if (con.State != ConnectionState.Closed)
+                                        else
                                         {
-                                            con.Close();
+                                            string updateString = "UPDATE SAYAC_BILGISI SET KWH = @yeniKWH WHERE ISIM = @sayacIsim AND TARIH = @tarih AND KWH = @eskiKWH";
+                                            SqlCommand updateCommand = new SqlCommand(updateString, con);
+
+                                            updateCommand.Parameters.Add("@sayacIsim", SqlDbType.VarChar).Value = sayacIsim2;
+                                            updateCommand.Parameters.Add("@tarih", SqlDbType.VarChar).Value = tarih2;
+                                            updateCommand.Parameters.Add("@yeniKWH", SqlDbType.Decimal).Value = yeniKWHDec;
+                                            updateCommand.Parameters.Add("@eskiKWH", SqlDbType.Decimal).Value = eskiKWHDec;
+                                            if (con.State != ConnectionState.Open)
+                                                con.Open();
+                                            updateCommand.ExecuteNonQuery();
+                                            if (con.State != ConnectionState.Closed)
+                                                con.Close();
                                         }
+
+
                                     }
                                     else
                                         iFail++;
@@ -987,13 +1084,13 @@ namespace SayacRapor
                         MessageBox.Show(string.Format("{0} updates failed due" +
                                         " to read only column setting", iFail));
                 }
-                veriYapistir = false;
             }
             catch (FormatException)
             {
                 MessageBox.Show("The data you pasted is in the wrong format for the cell");
                 return;
             }
+            veriYapistir = false;
         }
 
         public static void PasteFromExcel(DataGridView dgv)
