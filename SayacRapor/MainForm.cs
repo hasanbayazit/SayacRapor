@@ -48,7 +48,7 @@ namespace SayacRapor
         DataTable gunlukTable = new DataTable();
         decimal bugunKWH = 0, eskiKWH, yeniKWH;
         string startDate, endDate, ilkGunString, bugunTarih, sayacIsim, tarih, dinamikTarih;
-        int haftaSayisi, sayi, rowSayi = 0;
+        int haftaSayisi, gunSayisi, rowSayi = 0;
         public bool sifreDogru = false, insertMode = true, veriYapistir = false, veriSil = false;
         public bool adminMode = false;
         bool gecenAySonGunEklendi = false;
@@ -110,7 +110,7 @@ namespace SayacRapor
 
             //Tarih aralığı tabloya eklendi.
             DateTime gun = startZaman;
-            for (int i = 0; i<sayi; i++)
+            for (int i = 0; i<gunSayisi; i++)
             {
                 string tmpTarih = gun.AddDays(i).ToString("yyyy-MM-dd");
                 colDate.Add(tmpTarih);
@@ -249,7 +249,8 @@ namespace SayacRapor
                                 {
                                     if (Convert.ToDateTime(ekstraBaslangic[j]) <= Convert.ToDateTime(bugunTarih) && Convert.ToDateTime(ekstraBitis[j]) >= Convert.ToDateTime(bugunTarih))
                                     {
-                                        gunlukTuketim += Convert.ToInt32(ekstraKWH[j]);
+                                        if(bugunTarih != endDate)
+                                            gunlukTuketim += Convert.ToInt32(ekstraKWH[j]);
                                     }
                                 }
                             }
@@ -444,7 +445,7 @@ namespace SayacRapor
             startZaman = datePickerStart.Value;
             endZaman = datePickerEnd.Value;
             zaman = endZaman - startZaman;
-            sayi = zaman.Days + 1;
+            gunSayisi = zaman.Days + 1;
             int numberOfDays = (endZaman - startZaman).Days;
             for (int days = 0; days < numberOfDays; days++)
             {
@@ -765,6 +766,12 @@ namespace SayacRapor
             }
         }
 
+        private void saatlikVerilerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saatlikForm saatlikForm = new saatlikForm();
+            saatlikForm.Show();
+        }
+
         private void MainForm_KeyUp(object sender, KeyEventArgs e)
         {
             switch (e.KeyData)
@@ -966,15 +973,6 @@ namespace SayacRapor
                 }
             }
         }
-
-        private static void FreezeBand(DataGridViewBand band)
-        {
-            band.Frozen = true;
-            DataGridViewCellStyle style = new DataGridViewCellStyle();
-            style.BackColor = Color.DarkGray;
-            band.DefaultCellStyle = style;
-        }
-
         private void ayarlarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FormCollection fc = Application.OpenForms;
@@ -1205,6 +1203,15 @@ namespace SayacRapor
             {
                 if (sec == DateTime.Now.Second) break;
             }
+        }
+
+
+        private static void FreezeBand(DataGridViewBand band)
+        {
+            band.Frozen = true;
+            DataGridViewCellStyle style = new DataGridViewCellStyle();
+            style.BackColor = Color.DarkGray;
+            band.DefaultCellStyle = style;
         }
     }
 }

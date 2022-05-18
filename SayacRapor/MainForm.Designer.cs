@@ -50,17 +50,18 @@
             this.grafikMenüsüToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.günlükGrafikToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.haftalıkGrafikToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saatlikVerilerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel3 = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.progressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolHatali = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolEksik = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.sayaclarDataSet = new SayacRapor.SayaclarDataSet();
             this.sayaclarDataSetBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.timer3 = new System.Windows.Forms.Timer(this.components);
-            this.toolHatali = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolEksik = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataViewSayac)).BeginInit();
@@ -90,7 +91,7 @@
             this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox2.Size = new System.Drawing.Size(1622, 80);
+            this.groupBox2.Size = new System.Drawing.Size(1538, 80);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             // 
@@ -100,7 +101,7 @@
             this.lblKapasitif.AutoSize = true;
             this.lblKapasitif.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblKapasitif.ForeColor = System.Drawing.Color.Black;
-            this.lblKapasitif.Location = new System.Drawing.Point(1429, 44);
+            this.lblKapasitif.Location = new System.Drawing.Point(1345, 44);
             this.lblKapasitif.Name = "lblKapasitif";
             this.lblKapasitif.Size = new System.Drawing.Size(56, 25);
             this.lblKapasitif.TabIndex = 17;
@@ -112,7 +113,7 @@
             this.lblEnduktif.AutoSize = true;
             this.lblEnduktif.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblEnduktif.ForeColor = System.Drawing.Color.Black;
-            this.lblEnduktif.Location = new System.Drawing.Point(1429, 16);
+            this.lblEnduktif.Location = new System.Drawing.Point(1345, 16);
             this.lblEnduktif.Name = "lblEnduktif";
             this.lblEnduktif.Size = new System.Drawing.Size(56, 25);
             this.lblEnduktif.TabIndex = 16;
@@ -206,7 +207,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1619, 470);
+            this.panel1.Size = new System.Drawing.Size(1535, 470);
             this.panel1.TabIndex = 12;
             // 
             // dataViewSayac
@@ -223,7 +224,7 @@
             this.dataViewSayac.Name = "dataViewSayac";
             this.dataViewSayac.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataViewSayac.RowTemplate.Height = 24;
-            this.dataViewSayac.Size = new System.Drawing.Size(1619, 470);
+            this.dataViewSayac.Size = new System.Drawing.Size(1535, 470);
             this.dataViewSayac.TabIndex = 7;
             this.dataViewSayac.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataViewSayac_CellBeginEdit);
             this.dataViewSayac.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataViewSayac_CellMouseClick);
@@ -237,7 +238,7 @@
             this.panel2.Location = new System.Drawing.Point(0, 508);
             this.panel2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1619, 470);
+            this.panel2.Size = new System.Drawing.Size(1535, 470);
             this.panel2.TabIndex = 13;
             // 
             // dataViewGunluk
@@ -254,7 +255,7 @@
             this.dataViewGunluk.Name = "dataViewGunluk";
             this.dataViewGunluk.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataViewGunluk.RowTemplate.Height = 24;
-            this.dataViewGunluk.Size = new System.Drawing.Size(1619, 470);
+            this.dataViewGunluk.Size = new System.Drawing.Size(1535, 470);
             this.dataViewGunluk.TabIndex = 8;
             this.dataViewGunluk.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataViewGunluk_CellMouseClick);
             this.dataViewGunluk.Scroll += new System.Windows.Forms.ScrollEventHandler(this.dataViewGunluk_Scroll);
@@ -264,7 +265,8 @@
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ayarlarToolStripMenuItem1,
-            this.grafikMenüsüToolStripMenuItem});
+            this.grafikMenüsüToolStripMenuItem,
+            this.saatlikVerilerToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
@@ -318,6 +320,13 @@
             this.haftalıkGrafikToolStripMenuItem.Text = "Haftalık Grafik";
             this.haftalıkGrafikToolStripMenuItem.Click += new System.EventHandler(this.haftalıkGrafikToolStripMenuItem_Click);
             // 
+            // saatlikVerilerToolStripMenuItem
+            // 
+            this.saatlikVerilerToolStripMenuItem.Name = "saatlikVerilerToolStripMenuItem";
+            this.saatlikVerilerToolStripMenuItem.Size = new System.Drawing.Size(113, 24);
+            this.saatlikVerilerToolStripMenuItem.Text = "Saatlik Veriler";
+            this.saatlikVerilerToolStripMenuItem.Click += new System.EventHandler(this.saatlikVerilerToolStripMenuItem_Click);
+            // 
             // panel3
             // 
             this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -329,7 +338,7 @@
             this.panel3.Location = new System.Drawing.Point(16, 116);
             this.panel3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1621, 980);
+            this.panel3.Size = new System.Drawing.Size(1537, 980);
             this.panel3.TabIndex = 15;
             this.panel3.Paint += new System.Windows.Forms.PaintEventHandler(this.panel3_Paint);
             // 
@@ -344,7 +353,7 @@
             this.statusStrip1.Location = new System.Drawing.Point(0, 1096);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 19, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1423, 24);
+            this.statusStrip1.Size = new System.Drawing.Size(1423, 26);
             this.statusStrip1.TabIndex = 16;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -357,6 +366,24 @@
             // 
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(100, 18);
+            // 
+            // toolHatali
+            // 
+            this.toolHatali.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.toolHatali.ForeColor = System.Drawing.Color.Firebrick;
+            this.toolHatali.Name = "toolHatali";
+            this.toolHatali.Size = new System.Drawing.Size(457, 28);
+            this.toolHatali.Text = "Hatalı veri bulundu. Sayaç ayarlarını kontrol edin.";
+            this.toolHatali.Visible = false;
+            // 
+            // toolEksik
+            // 
+            this.toolEksik.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.toolEksik.ForeColor = System.Drawing.Color.Firebrick;
+            this.toolEksik.Name = "toolEksik";
+            this.toolEksik.Size = new System.Drawing.Size(470, 28);
+            this.toolEksik.Text = "Eksik kolon bulundu. Sayaç ayarlarını kontrol edin.";
+            this.toolEksik.Visible = false;
             // 
             // timer1
             // 
@@ -382,24 +409,6 @@
             // 
             this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
             // 
-            // toolHatali
-            // 
-            this.toolHatali.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.toolHatali.ForeColor = System.Drawing.Color.Firebrick;
-            this.toolHatali.Name = "toolHatali";
-            this.toolHatali.Size = new System.Drawing.Size(457, 28);
-            this.toolHatali.Text = "Hatalı veri bulundu. Sayaç ayarlarını kontrol edin.";
-            this.toolHatali.Visible = false;
-            // 
-            // toolEksik
-            // 
-            this.toolEksik.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.toolEksik.ForeColor = System.Drawing.Color.Firebrick;
-            this.toolEksik.Name = "toolEksik";
-            this.toolEksik.Size = new System.Drawing.Size(470, 28);
-            this.toolEksik.Text = "Eksik kolon bulundu. Sayaç ayarlarını kontrol edin.";
-            this.toolEksik.Visible = false;
-            // 
             // MainForm
             // 
             this.AcceptButton = this.btn_VeriGetir;
@@ -416,7 +425,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "MainForm";
-            this.Text = "Sayaç Raporu v1.0.3.0";
+            this.Text = "Sayaç Raporu v1.1.0.0";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
@@ -471,6 +480,7 @@
         private System.Windows.Forms.Timer timer3;
         private System.Windows.Forms.ToolStripStatusLabel toolHatali;
         private System.Windows.Forms.ToolStripStatusLabel toolEksik;
+        private System.Windows.Forms.ToolStripMenuItem saatlikVerilerToolStripMenuItem;
     }
 }
 

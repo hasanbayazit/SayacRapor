@@ -124,6 +124,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="saatlikForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="saatlikForm.Designer.cs">
+      <DependentUpon>saatlikForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="SayaclarDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -161,6 +167,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="saatlikForm.resx">
+      <DependentUpon>saatlikForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SayacSettings.resx">
       <DependentUpon>SayacSettings.cs</DependentUpon>
     </EmbeddedResource>

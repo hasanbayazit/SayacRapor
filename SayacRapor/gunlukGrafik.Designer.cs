@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.LineAnnotation lineAnnotation2 = new System.Windows.Forms.DataVisualization.Charting.LineAnnotation();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.LineAnnotation lineAnnotation1 = new System.Windows.Forms.DataVisualization.Charting.LineAnnotation();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.checkFanOrt = new System.Windows.Forms.CheckBox();
@@ -74,7 +74,7 @@
             this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox2.Size = new System.Drawing.Size(1795, 138);
+            this.groupBox2.Size = new System.Drawing.Size(1753, 138);
             this.groupBox2.TabIndex = 7;
             this.groupBox2.TabStop = false;
             // 
@@ -218,41 +218,41 @@
             // 
             // chart1
             // 
-            lineAnnotation2.AxisXName = "areaSayac\\rX";
-            lineAnnotation2.Height = 5D;
-            lineAnnotation2.LineWidth = 2;
-            lineAnnotation2.Name = "lineOrtalama";
-            lineAnnotation2.Width = 151D;
-            lineAnnotation2.X = 5D;
-            lineAnnotation2.Y = 90D;
-            lineAnnotation2.YAxisName = "areaSayac\\rY";
-            this.chart1.Annotations.Add(lineAnnotation2);
-            chartArea2.AlignmentOrientation = ((System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations)((System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations.Vertical | System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations.Horizontal)));
-            chartArea2.Area3DStyle.Rotation = 90;
-            chartArea2.IsSameFontSizeForAllAxes = true;
-            chartArea2.Name = "areaSayac";
-            this.chart1.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart1.Legends.Add(legend2);
+            lineAnnotation1.AxisXName = "areaSayac\\rX";
+            lineAnnotation1.Height = 5D;
+            lineAnnotation1.LineWidth = 2;
+            lineAnnotation1.Name = "lineOrtalama";
+            lineAnnotation1.Width = 151D;
+            lineAnnotation1.X = 5D;
+            lineAnnotation1.Y = 90D;
+            lineAnnotation1.YAxisName = "areaSayac\\rY";
+            this.chart1.Annotations.Add(lineAnnotation1);
+            chartArea1.AlignmentOrientation = ((System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations)((System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations.Vertical | System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations.Horizontal)));
+            chartArea1.Area3DStyle.Rotation = 90;
+            chartArea1.IsSameFontSizeForAllAxes = true;
+            chartArea1.Name = "areaSayac";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(12, 173);
             this.chart1.Name = "chart1";
-            series4.ChartArea = "areaSayac";
-            series4.Legend = "Legend1";
-            series4.Name = "Series1";
-            series5.ChartArea = "areaSayac";
-            series5.Legend = "Legend1";
-            series5.Name = "Series2";
-            series6.ChartArea = "areaSayac";
-            series6.Legend = "Legend1";
-            series6.Name = "Series3";
-            this.chart1.Series.Add(series4);
-            this.chart1.Series.Add(series5);
-            this.chart1.Series.Add(series6);
+            series1.ChartArea = "areaSayac";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            series2.ChartArea = "areaSayac";
+            series2.Legend = "Legend1";
+            series2.Name = "Series2";
+            series3.ChartArea = "areaSayac";
+            series3.Legend = "Legend1";
+            series3.Name = "Series3";
+            this.chart1.Series.Add(series1);
+            this.chart1.Series.Add(series2);
+            this.chart1.Series.Add(series3);
             this.chart1.Size = new System.Drawing.Size(400, 650);
             this.chart1.TabIndex = 10;
             this.chart1.Text = "chart1";
-            title2.Name = "Title1";
-            this.chart1.Titles.Add(title2);
+            title1.Name = "Title1";
+            this.chart1.Titles.Add(title1);
             // 
             // menuStrip1
             // 
@@ -264,7 +264,7 @@
             this.etiketleriGösterGizleToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(335, 30);
+            this.menuStrip1.Size = new System.Drawing.Size(162, 28);
             this.menuStrip1.TabIndex = 11;
             this.menuStrip1.Text = "menuStrip1";
             // 
